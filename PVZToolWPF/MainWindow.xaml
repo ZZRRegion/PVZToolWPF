@@ -5,17 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PVZToolWPF"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="{Binding Title}" Loaded="Window_Loaded" Height="450" Width="800">
+        Title="{Binding Title}" FontSize="20" Loaded="Window_Loaded" Height="450" Width="800">
     <Window.DataContext>
         <local:MainWindowViewModel x:Name="viewModel"/>
     </Window.DataContext>
     <Grid>
-        <StackPanel>
+        <StackPanel VerticalAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="阳光值："/>
                 <TextBox Width="100" Text="{Binding SunValue}" />
-                <CheckBox IsChecked="{Binding LockSun}" Content="锁定"/>
+                <CheckBox VerticalContentAlignment="Center" IsChecked="{Binding LockSun}" Content="锁定"/>
             </StackPanel>
+            <GroupBox Header="卡槽无冷却">
+                <StackPanel>
+                    <CheckBox ToolTip="{Binding CardNoCD1Memo}" IsChecked="{Binding IsCardNoCD1}" VerticalContentAlignment="Center" Command="{Binding CardNoCDCommand}" Content="方式1"/>
+                </StackPanel>
+            </GroupBox>
         </StackPanel>
     </Grid>
 </Window>

@@ -71,6 +71,8 @@ namespace PVZToolWPF
                     MemoryUtil.HProcess = hprocess;
                     HINSTANCE[] hinstances = Kernel32.EnumProcessModules(hprocess);
                     this.baseAddress = hinstances[0].DangerousGetHandle().ToInt32();
+                    this.viewModel.Update(hprocess, baseAddress);
+
                 }
             }
             return true;
