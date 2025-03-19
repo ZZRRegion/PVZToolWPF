@@ -31,7 +31,7 @@ namespace PVZToolWPF
             this.ReadCardNoCD1();
         }
         [ObservableProperty]
-        private string cardNoCD1Memo = "修改内存地址:0x487296处的，0x147E为0x147D";
+        private string cardNoCD1Memo = "修改内存地址:0x487296处的，0x147E为0x147D，即更改jle->jge";
         private void ReadCardNoCD1()
         {
             int address = this.baseAddress + 0x87296;
