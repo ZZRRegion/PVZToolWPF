@@ -7,12 +7,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
+using PVZToolWPF.Util;
 
 namespace PVZToolWPF
 {
     internal partial class MainWindowViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
-        private Kernel32.SafeHPROCESS hProcess;
+        private Kernel32.SafeHPROCESS hProcess = Kernel32.SafeHPROCESS.Null;
         private int baseAddress;
         [ObservableProperty]
         private int sunValue;
@@ -27,9 +28,19 @@ namespace PVZToolWPF
         {
             this.hProcess = hProcess;
             this.baseAddress = baseAddress;
+            this.ReadCardNoCD1();
         }
         [ObservableProperty]
         private string cardNoCD1Memo = "修改内存地址:0x487296处的，0x147E为0x147D";
+        private void ReadCardNoCD1()
+        {
+            int address = this.baseAddress + 0x87296;
+            short value = MemoryUtil.ReadProcessMemoryShort(address);
+            if(value == 0x147D)
+            {
+                this.IsCardNoCD = true;
+            }
+        }
         [RelayCommand]
         private void CardNoCD1()
         {

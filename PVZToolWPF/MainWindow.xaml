@@ -18,7 +18,7 @@
             </StackPanel>
             <GroupBox Header="卡槽无冷却">
                 <StackPanel>
-                    <CheckBox ToolTip="{Binding CardNoCD1Memo}" IsChecked="{Binding IsCardNoCD1}" VerticalContentAlignment="Center" Command="{Binding CardNoCDCommand}" Content="方式1"/>
+                    <CheckBox ToolTip="{Binding CardNoCD1Memo}" IsChecked="{Binding IsCardNoCD}" VerticalContentAlignment="Center" Command="{Binding CardNoCD1Command}" Content="方式1"/>
                 </StackPanel>
             </GroupBox>
         </StackPanel>

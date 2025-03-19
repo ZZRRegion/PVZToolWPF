@@ -44,6 +44,7 @@ namespace PVZToolWPF
             {
                 if(this.viewModel.LockSun)
                 {
+                    this.viewModel.SunValue = 1024;
                     MemoryUtil.WriteProcessMemoryInt(this.viewModel.SunValue, this.baseAddress + 0x2A9EC0, 0x768, 0x5560);
                 }
                 else
