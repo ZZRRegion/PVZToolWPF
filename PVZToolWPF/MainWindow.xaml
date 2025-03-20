@@ -9,16 +9,22 @@
     <Window.DataContext>
         <local:MainWindowViewModel x:Name="viewModel"/>
     </Window.DataContext>
+    <Window.Resources>
+        <Style TargetType="CheckBox">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <StackPanel VerticalAlignment="Center">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="阳光值："/>
                 <TextBox Width="100" Text="{Binding SunValue}" />
-                <CheckBox VerticalContentAlignment="Center" IsChecked="{Binding LockSun}" Content="锁定"/>
+                <CheckBox IsChecked="{Binding LockSun}" Content="锁定"/>
             </StackPanel>
             <GroupBox Header="卡槽无冷却">
                 <StackPanel>
-                    <CheckBox ToolTip="{Binding CardNoCD1Memo}" IsChecked="{Binding IsCardNoCD}" VerticalContentAlignment="Center" Command="{Binding CardNoCD1Command}" Content="方式1"/>
+                    <CheckBox ToolTip="{Binding CardNoCD1Memo}" IsChecked="{Binding IsCardNoCD1}" Command="{Binding CardNoCD1Command}" Content="方式1"/>
+                    <CheckBox ToolTip="{Binding CardNoCD2Memo}" IsChecked="{Binding IsCardNoCD2}" Command="{Binding CardNoCD2Command}" Content="方式二"/>
                 </StackPanel>
             </GroupBox>
         </StackPanel>
