@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -207,7 +208,28 @@ namespace PVZToolWPF
             {
                 plantCallBuffer = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
             }
-            
+            byte[] bys = new byte[]
+                {
+                    0x60, //pushad
+                    0x8B, 0x0D, 0xC0, 0x9E, 0x6A, 0x00, //mov ecx,[6a9ec0]
+                    0x8B, 0x89, 0x68, 0x07, 0x00, 0x00, //mov ecx,[ecx+768]
+                    0x6A, 0xFF, //push -1 固定-1
+                    0x6A, 0x02, //push 2 植物ID
+                    0xB8, 0x04, 0x00, 0x00, 0x00,//mov eax,4 Y轴 
+                    0x6A, 0x06, //push 6 X轴
+                    0x51, // push ecx
+                    0xE8, 0x02, 0xD1, 0x8C, 0xFD, //call 0040D120
+                    0x61, //popad
+                    0xC3 // ret
+                };
+            int callAddress = 0x40D120 - (int)plantCallBuffer - bys.Length + 2;
+            bys[bys.Length - 6] = callAddress;
+            byte[] b = BitConverter.GetBytes(callAddress);
+            bys[bys.Length - 6] = b[0];
+            bys[bys.Length - 5] = b[1];
+            bys[bys.Length - 4] = b[2];
+            bys[bys.Length - 3] = b[3];
+            MemoryUtil.WriteProcessMemoryBytes(bys, (int)plantCallBuffer);
             Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, plantCallBuffer, nint.Zero, 0, out _);
             Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
             hthread.Close();
