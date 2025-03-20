@@ -20,7 +20,7 @@ namespace PVZToolWPF
         private int sunValue;
         [ObservableProperty]
         private bool lockSun;
-        public const string SoftName = "植物大战僵尸中文版修改器-WPF";
+        public const string SoftName = "植物大战僵尸中文版修改器WPF版@stdio";
         [ObservableProperty]
         private string title = SoftName;
         [ObservableProperty]

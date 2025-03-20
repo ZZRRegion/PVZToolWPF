@@ -23,9 +23,9 @@
             </ListBox.ItemsPanel>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem},Path=(ItemsControl.AlternationIndex), Converter={StaticResource IndexConverter}, StringFormat=卡槽{0:D2}->}"/>
-                        <TextBlock Text="{Binding}"/>
+                    <StackPanel>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem},Path=(ItemsControl.AlternationIndex), Converter={StaticResource IndexConverter}, StringFormat=卡槽{0:D2}}"/>
+                        <TextBlock HorizontalAlignment="Center" Text="{Binding}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
