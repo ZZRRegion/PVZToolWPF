@@ -33,6 +33,52 @@ namespace PVZToolWPF
             this.baseAddress = baseAddress;
             this.ReadCardNoCD1();
             this.ReadCardNoCD2();
+            this.ReadAutoCollect();
+            this.ReadAutoCollect2();
+        }
+        [ObservableProperty]
+        private bool isAutoCollect = false;
+        [ObservableProperty]
+        private bool isAutoCollect2 = false;
+        private void ReadAutoCollect()
+        {
+            int address = 0x0043158F;
+            short value = MemoryUtil.ReadProcessMemoryShort(address);
+            if(value == 0x0874)
+            {
+                this.IsAutoCollect = true;
+            }
+        }
+        private void ReadAutoCollect2()
+        {
+            int address = 0x00430AD0;
+            short value = MemoryUtil.ReadProcessMemoryShort(address);
+            if((ushort)value != 0x3E75)
+            {
+                this.IsAutoCollect2 = true;
+            }
+        }
+        [RelayCommand]
+        private void AutoCollect()
+        {
+            int address = 0x0043158F;
+            short value = 0x0875;//原指令
+            if(this.IsAutoCollect)
+            {
+                value = 0x0874;//je
+            }
+            MemoryUtil.WriteProcessMemoryShort(value, address);
+        }
+        [RelayCommand]
+        private void AutoCollect2()
+        {
+            int address = 0x00430AD0;
+            ushort value = 0x3E75;
+            if(this.IsAutoCollect2)
+            {
+                value = 0x9090;
+            }
+            MemoryUtil.WriteProcessMemoryShort((short)value, address);
         }
         #region 卡槽无冷却
         [ObservableProperty]
