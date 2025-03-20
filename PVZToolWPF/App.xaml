@@ -2,8 +2,25 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PVZToolWPF"
+             xmlns:window="clr-namespace:System.Windows;assembly=PresentationFramework"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="#FF3975C6" SecondaryColor="#FFC9E7FF" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <!--更改MaterialDesignThemes设置的字体，重要 start-->
+            <Style TargetType="TextBlock">
+                <Setter Property="FontFamily" Value="{x:Static window:SystemFonts.CaptionFontFamily}"/>
+            </Style>
+            <Style TargetType="TextBox">
+                <Setter Property="FontFamily" Value="{x:Static window:SystemFonts.CaptionFontFamily}"/>
+            </Style>
+            <!--更改MaterialDesignThemes设置的字体，重要 end-->
+        </ResourceDictionary>
+        
     </Application.Resources>
 </Application>
