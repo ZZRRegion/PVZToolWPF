@@ -223,7 +223,6 @@ namespace PVZToolWPF
                     0xC3 // ret
                 };
             int callAddress = 0x40D120 - (int)plantCallBuffer - bys.Length + 2;
-            bys[bys.Length - 6] = callAddress;
             byte[] b = BitConverter.GetBytes(callAddress);
             bys[bys.Length - 6] = b[0];
             bys[bys.Length - 5] = b[1];

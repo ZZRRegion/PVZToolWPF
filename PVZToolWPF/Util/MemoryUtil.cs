@@ -118,9 +118,9 @@ namespace PVZToolWPF.Util
         public static bool WriteProcessMemoryBytes(byte[] bys, int baseAddr)
         {
             Kernel32.VirtualProtectEx(HProcess, baseAddr, bys.Length, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE, out var old);
-            Kernel32.WriteProcessMemory(HProcess, baseAddr, bys, bys.Length, out _);
+            bool flag = Kernel32.WriteProcessMemory(HProcess, baseAddr, bys, bys.Length, out _);
             Kernel32.VirtualProtectEx(HProcess, baseAddr, bys.Length, old, out old);
-            return true;
+            return flag;
         }
         public static bool WriteProcessMemoryShort(short value, int baseAddr)
         {
