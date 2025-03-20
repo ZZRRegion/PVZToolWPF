@@ -15,9 +15,4 @@
     <PackageReference Include="Vanara.PInvoke.User32" Version="4.1.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="View\" />
-    <Folder Include="ViewModel\" />
-  </ItemGroup>
-
 </Project>

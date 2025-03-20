@@ -15,7 +15,7 @@ namespace PVZToolWPF.Util
     /// </summary>
     internal static class MemoryUtil
     {
-        public static Kernel32.SafeHPROCESS HProcess { get; set; }
+        public static Kernel32.SafeHPROCESS HProcess { get; set; } = Kernel32.SafeHPROCESS.Null;
         public static int ReadProcessMemoryInt(int baseAddr, int one, int two)
         {
             int value = 0;
@@ -30,6 +30,54 @@ namespace PVZToolWPF.Util
                     if (Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
                     {
                         value = Marshal.ReadInt32(buf);
+                    }
+                }
+            }
+            Marshal.FreeCoTaskMem(buf);
+            return value;
+        }
+        public static int ReadProcessMemoryInt(int baseAddr, int one, int two,int three)
+        {
+            int value = 0;
+            int address = baseAddr;
+            nint buf = Marshal.AllocCoTaskMem(4);
+            if (Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
+            {
+                address = Marshal.ReadInt32(buf) + one;
+                if (Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
+                {
+                    address = Marshal.ReadInt32(buf) + two;
+                    if (Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
+                    {
+                        address = Marshal.ReadInt32(buf) + three;
+                        if(Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
+                        {
+                            value = Marshal.ReadInt32(buf);
+                        }
+                    }
+                }
+            }
+            Marshal.FreeCoTaskMem(buf);
+            return value;
+        }
+        public static int ReadProcessMemoryByte(int baseAddr, int one, int two, int three)
+        {
+            byte value = 0;
+            int address = baseAddr;
+            nint buf = Marshal.AllocCoTaskMem(4);
+            if (Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
+            {
+                address = Marshal.ReadInt32(buf) + one;
+                if (Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
+                {
+                    address = Marshal.ReadInt32(buf) + two;
+                    if (Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
+                    {
+                        address = Marshal.ReadInt32(buf) + three;
+                        if (Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
+                        {
+                            value = Marshal.ReadByte(buf);
+                        }
                     }
                 }
             }

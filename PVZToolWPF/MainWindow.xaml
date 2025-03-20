@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PVZToolWPF"
+        xmlns:view="clr-namespace:PVZToolWPF.View"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
         Title="{Binding Title}" FontSize="20" Loaded="Window_Loaded" Height="450" Width="800">
     <Window.DataContext>
@@ -15,18 +16,27 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <StackPanel VerticalAlignment="Center">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="阳光值："/>
-                <TextBox Width="100" Text="{Binding SunValue}" />
-                <CheckBox IsChecked="{Binding LockSun}" Content="锁定"/>
-            </StackPanel>
-            <GroupBox Header="卡槽无冷却">
-                <StackPanel>
-                    <CheckBox ToolTip="{Binding CardNoCD1Memo}" IsChecked="{Binding IsCardNoCD1}" Command="{Binding CardNoCD1Command}" Content="方式1"/>
-                    <CheckBox ToolTip="{Binding CardNoCD2Memo}" IsChecked="{Binding IsCardNoCD2}" Command="{Binding CardNoCD2Command}" Content="方式二"/>
+        <TabControl>
+            <TabItem Header="通用">
+                <StackPanel VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="阳光值："/>
+                        <TextBox Width="100" Text="{Binding SunValue}" />
+                        <CheckBox IsChecked="{Binding LockSun}" Content="锁定"/>
+                    </StackPanel>
+                    <GroupBox Header="卡槽无冷却">
+                        <StackPanel>
+                            <CheckBox ToolTip="{Binding CardNoCD1Memo}" IsChecked="{Binding IsCardNoCD1}" Command="{Binding CardNoCD1Command}" Content="方式1"/>
+                            <CheckBox ToolTip="{Binding CardNoCD2Memo}" IsChecked="{Binding IsCardNoCD2}" Command="{Binding CardNoCD2Command}" Content="方式二"/>
+                        </StackPanel>
+                    </GroupBox>
                 </StackPanel>
-            </GroupBox>
-        </StackPanel>
+
+            </TabItem>
+            <TabItem Header="卡槽冷却">
+                <view:CardNoCDControl x:Name="cardNoCD"/>
+            </TabItem>
+        </TabControl>
+        
     </Grid>
 </Window>

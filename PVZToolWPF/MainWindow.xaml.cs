@@ -12,6 +12,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using PVZToolWPF.Util;
+using PVZToolWPF.ViewModel;
 
 namespace PVZToolWPF
 {
@@ -72,8 +73,15 @@ namespace PVZToolWPF
                     MemoryUtil.HProcess = hprocess;
                     HINSTANCE[] hinstances = Kernel32.EnumProcessModules(hprocess);
                     this.baseAddress = hinstances[0].DangerousGetHandle().ToInt32();
-                    this.viewModel.Update(hprocess, baseAddress);
-
+                    List<IPVZUpdate> updates = new()
+                    {
+                        this.viewModel,
+                        this.cardNoCD,
+                    };
+                    updates.ForEach(item =>
+                    {
+                        item.Update(hprocess, baseAddress);
+                    });
                 }
             }
             return true;

@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using PVZToolWPF.Util;
+using PVZToolWPF.ViewModel;
 
 namespace PVZToolWPF
 {
-    internal partial class MainWindowViewModel : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
+    internal partial class MainWindowViewModel : ObservableObject,IPVZUpdate
     {
         private Kernel32.SafeHPROCESS hProcess = Kernel32.SafeHPROCESS.Null;
         private int baseAddress;
