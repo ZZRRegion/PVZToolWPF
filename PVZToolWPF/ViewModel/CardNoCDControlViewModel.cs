@@ -18,7 +18,7 @@ namespace PVZToolWPF.ViewModel
             this.baseAddress = baseAddress;
         }
         [ObservableProperty]
-        private ObservableCollection<string> cardCDs = new ObservableCollection<string>();
+        private ObservableCollection<string> cardCDs = [];
         public CardNoCDControlViewModel()
         {
             for (int i = 0; i < 10; i++)
@@ -33,10 +33,9 @@ namespace PVZToolWPF.ViewModel
                 return;
             }
             int address = 0x496BC8;
-            int offset = 0x70;
             for (int i = 0; i < 10; i++)
             {
-                offset = 0x70 + i * 0x50;
+                int offset = 0x70 + i * 0x50;
                 this.CardCDs[i] = MemoryUtil.ReadProcessMemoryByte(address, 0x8, 0x144, offset).ToString();
             }
         }
