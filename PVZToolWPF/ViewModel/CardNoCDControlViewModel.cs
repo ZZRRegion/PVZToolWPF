@@ -19,11 +19,14 @@ namespace PVZToolWPF.ViewModel
         }
         [ObservableProperty]
         private ObservableCollection<string> cardCDs = [];
+        [ObservableProperty]
+        private ObservableCollection<string> sunClicks = [];
         public CardNoCDControlViewModel()
         {
             for (int i = 0; i < 10; i++)
             {
                 cardCDs.Add("");
+                sunClicks.Add("");
             }
         }
         public void UpdateDate()
@@ -37,6 +40,12 @@ namespace PVZToolWPF.ViewModel
             {
                 int offset = 0x70 + i * 0x50;
                 this.CardCDs[i] = MemoryUtil.ReadProcessMemoryByte(address, 0x8, 0x144, offset).ToString();
+            }
+            address = 0x6A9EC0;
+            for(int i = 0; i < 10; i++)
+            {
+                int offset = 0x50 + i * 0xD8;
+                this.SunClicks[i] = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xE4, offset).ToString();
             }
         }
     }
