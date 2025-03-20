@@ -30,6 +30,7 @@
                             <CheckBox ToolTip="{Binding CardNoCD2Memo}" IsChecked="{Binding IsCardNoCD2}" Command="{Binding CardNoCD2Command}" Content="方式2"/>
                         </StackPanel>
                     </GroupBox>
+                    <CheckBox IsChecked="{Binding IsBulletStacking}" Command="{Binding BulletStackingCommand}" Content="子弹叠加"/>
                 </StackPanel>
 
             </TabItem>

@@ -35,6 +35,7 @@ namespace PVZToolWPF
             this.ReadCardNoCD2();
             this.ReadAutoCollect();
             this.ReadAutoCollect2();
+            this.ReadBulletStacking();
         }
         [ObservableProperty]
         private bool isAutoCollect = false;
@@ -125,6 +126,38 @@ namespace PVZToolWPF
                 value = 0x014845C6;
             }
             MemoryUtil.WriteProcessMemoryInt(value, address);
+        }
+        #endregion
+        #region 子弹叠加
+        [ObservableProperty]
+        private bool isBulletStacking = false;
+        private void ReadBulletStacking()
+        {
+            int address = 0x464A96;
+            byte[] oldbys = { 0x0F, 0x85, 0x98, 0xFE, 0xFF, 0xFF };
+            byte[] bys = MemoryUtil.ReadProcessMemoryBytes(address, 6);
+            for(int i = 0; i < 6; i++)
+            {
+                if (bys[i] != oldbys[i])
+                {
+                    this.IsBulletStacking = true;
+                    break;
+                }
+            }
+        }
+        [RelayCommand]
+        private void BulletStacking()
+        {
+            int address = 0x464A96;
+            byte[] bys = { 0x0F, 0x85, 0x98, 0xFE, 0xFF, 0xFF };
+            if(this.IsBulletStacking)
+            {
+                for(int i = 0; i < 6; i++)
+                {
+                    bys[i] = 0x90;
+                }
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion
     }

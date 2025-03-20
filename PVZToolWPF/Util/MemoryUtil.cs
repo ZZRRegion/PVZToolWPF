@@ -5,6 +5,7 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Vanara;
 using Vanara.PInvoke;
 using static Vanara.PInvoke.User32;
 
@@ -16,6 +17,20 @@ namespace PVZToolWPF.Util
     internal static class MemoryUtil
     {
         public static Kernel32.SafeHPROCESS HProcess { get; set; } = Kernel32.SafeHPROCESS.Null;
+        public static byte[] ReadProcessMemoryBytes(int baseAddr, int count)
+        {
+            byte[] bys = new byte[count];
+            nint buf = Marshal.AllocCoTaskMem(count);
+            if(Kernel32.ReadProcessMemory(HProcess, baseAddr, buf, count, out _))
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    bys[i] = Marshal.ReadByte(buf + i);
+                }
+            }
+            Marshal.FreeCoTaskMem(buf);
+            return bys;
+        }
         public static int ReadProcessMemoryInt(int baseAddr, int one, int two)
         {
             int value = 0;
@@ -99,6 +114,13 @@ namespace PVZToolWPF.Util
             int value = Marshal.ReadInt32(buf);
             Marshal.FreeCoTaskMem(buf);
             return value;
+        }
+        public static bool WriteProcessMemoryBytes(byte[] bys, int baseAddr)
+        {
+            Kernel32.VirtualProtectEx(HProcess, baseAddr, bys.Length, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE, out var old);
+            Kernel32.WriteProcessMemory(HProcess, baseAddr, bys, bys.Length, out _);
+            Kernel32.VirtualProtectEx(HProcess, baseAddr, bys.Length, old, out old);
+            return true;
         }
         public static bool WriteProcessMemoryShort(short value, int baseAddr)
         {
