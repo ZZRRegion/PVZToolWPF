@@ -15,7 +15,7 @@
         <converter:IndexConverter x:Key="IndexConverter"/>
     </UserControl.Resources>
     <Grid>
-        <ListBox AlternationCount="2147483647" ItemsSource="{Binding CardCDs}">
+        <ListBox HorizontalAlignment="Center" AlternationCount="2147483647" ItemsSource="{Binding CardCDs}">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
