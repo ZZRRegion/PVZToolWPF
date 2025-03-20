@@ -163,5 +163,27 @@ namespace PVZToolWPF.Util
             Marshal.FreeCoTaskMem(buf);
             return flag;
         }
+        public static bool WriteProcessMemoryInt(int value, int baseAddr, int one, int two, int three)
+        {
+            bool flag = false;
+            nint buf = Marshal.AllocCoTaskMem(4);
+            int address = baseAddr;
+            if (Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
+            {
+                address = Marshal.ReadInt32(buf) + one;
+                if (Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
+                {
+                    address = Marshal.ReadInt32(buf) + two;
+                    if (Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
+                    {
+                        address = Marshal.ReadInt32(buf) + three;
+                        flag = WriteProcessMemoryInt(value, address);
+                    }
+                }
+            }
+            Marshal.FreeCoTaskMem(buf);
+            return flag;
+        }
+
     }
 }

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -36,6 +37,16 @@ namespace PVZToolWPF
             this.ReadAutoCollect();
             this.ReadAutoCollect2();
             this.ReadBulletStacking();
+        }
+        public MainWindowViewModel()
+        {
+            for(int i = 0; i < 10; i++)
+            {
+                this.cardNums.Add($"卡槽{i+1}");
+            }
+            this.plantNums.Add("豌豆射手");
+            this.plantNums.Add("向日葵");
+            this.plantNums.Add("樱桃炸弹");
         }
         [ObservableProperty]
         private bool isAutoCollect = false;
@@ -158,6 +169,23 @@ namespace PVZToolWPF
                 }
             }
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
+        #region 更改卡槽植物
+        [ObservableProperty]
+        private int cardIndex = 0;
+        [ObservableProperty]
+        private ObservableCollection<string> cardNums = [];
+        [ObservableProperty]
+        private int plantIndex = 0;
+        [ObservableProperty]
+        private ObservableCollection<string> plantNums = [];
+        [RelayCommand]
+        private void ChangedCardPlant()
+        {
+            int address = 0x6A9EC0;
+            int offset = 0x5c + this.CardIndex * 0x50;
+            MemoryUtil.WriteProcessMemoryInt(this.PlantIndex, address, 0x768, 0x144, offset);
         }
         #endregion
     }
