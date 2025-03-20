@@ -188,5 +188,30 @@ namespace PVZToolWPF
             MemoryUtil.WriteProcessMemoryInt(this.PlantIndex, address, 0x768, 0x144, offset);
         }
         #endregion
+        #region 种植Call
+        [ObservableProperty]
+        private ObservableCollection<int> xAxiss = [];
+        [ObservableProperty]
+        private int xAxis = 0;
+        [ObservableProperty]
+        private ObservableCollection<int> yAxiss = [];
+        [ObservableProperty]
+        private int yAxis = 0;
+        [ObservableProperty]
+        private int plantIDCall = 0;
+        private nint plantCallBuffer = nint.Zero;
+        [RelayCommand]
+        private void PlantCall()
+        {
+            if(plantCallBuffer == nint.Zero)
+            {
+                plantCallBuffer = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+            }
+            
+            Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, plantCallBuffer, nint.Zero, 0, out _);
+            Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
+            hthread.Close();
+        }
+        #endregion
     }
 }

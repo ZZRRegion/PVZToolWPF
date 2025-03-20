@@ -36,6 +36,15 @@
                         <ComboBox SelectedIndex="{Binding PlantIndex}" ItemsSource="{Binding PlantNums}" Width="200" IsReadOnly="True"/>
                         <Button Command="{Binding ChangedCardPlantCommand}" Content="更改卡槽植物"/>
                     </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="X轴:"/>
+                        <ComboBox SelectedIndex="{Binding XAxis}" ItemsSource="{Binding XAxiss}" Width="100"/>
+                        <TextBlock Text="Y轴："/>
+                        <ComboBox SelectedIndex="{Binding YAxis}" ItemsSource="{Binding YAxiss}" Width="100"/>
+                        <TextBlock Text="植物："/>
+                        <ComboBox ItemsSource="{Binding PlantNums}" SelectedIndex="{Binding PlantIDCall}" Width="200"/>
+                        <Button Command="{Binding PlantCallCommand}" Content="种植Call"/>
+                    </StackPanel>
                 </StackPanel>
 
             </TabItem>
