@@ -42,6 +42,7 @@ namespace PVZToolWPF
             this.ReadCheat();
             ReadPurpleCardUnlimited();
             ReadPlantPurpleCard();
+            this.SeckillHook();
         }
         public MainWindowViewModel()
         {
@@ -488,6 +489,43 @@ namespace PVZToolWPF
                 value = 0x46EB;
             }
             MemoryUtil.WriteProcessMemoryShort(value, address);
+        }
+        #endregion
+        #region 全屏秒杀
+        [RelayCommand]
+        private void Seckill()
+        {
+            int address = 0x722000;
+            for(int i = 0; i < 500; i++)
+            {
+                MemoryUtil.WriteProcessMemoryInt(3, address, i*348 + 0x28);
+                MemoryUtil.WriteProcessMemoryInt(3, address, -i * 348 + 0x28);
+            }
+        }
+        /// <summary>
+        /// 全屏秒杀hook,需要先执行
+        /// </summary>
+        private void SeckillHook()
+        {
+            byte[] bys = [
+                0xE9, 0x24, 0x46, 0x1F, 0x00, //jmp 72200a
+                0x90, //nop
+                0x90 //nop
+                ];
+            int address = 0x52D9E1;
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            address = 0x72200A;
+            byte[] jmps = [
+                0x60, //pushad
+                0x8D, 0x01, //lea eax,[ecx]
+                0xA3, 0x00, 0x20, 0x72, 0x00, //mov [722000],eax
+                0x61, //popad
+                0xD9, 0x41, 0x2C, //fld dword ptr [ecx+24]
+                0x57, //push edi
+                0xDA, 0x61, 0x08, //fisub [ecx+08]
+                0xE9, 0xC9, 0xB9, 0xE0, 0xFF //jmp 52d9e8
+                ];
+            MemoryUtil.WriteProcessMemoryBytes(jmps, address);
         }
         #endregion
     }

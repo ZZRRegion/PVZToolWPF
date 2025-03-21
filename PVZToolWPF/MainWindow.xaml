@@ -70,6 +70,7 @@
                             <CheckBox IsChecked="{Binding IsPurpleCardUnlimited}" Command="{Binding WritePurpleCardUnlimitedCommand}" Content="紫卡可用"/>
                             <CheckBox IsChecked="{Binding IsPlantPurpleCard}" Command="{Binding WritePlantPurpleCardCommand}" Content="紫卡直接种植"/>
                         </StackPanel>
+                        <Button Command="{Binding SeckillCommand}" Content="全屏秒杀"/>
                     </StackPanel>
                 </StackPanel>
 
