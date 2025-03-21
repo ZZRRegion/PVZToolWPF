@@ -68,6 +68,7 @@
                         <StackPanel Orientation="Horizontal">
                             <CheckBox IsChecked="{Binding IsCheat}" Command="{Binding WriteCheatCommand}" Content="作弊标志"/>
                             <CheckBox IsChecked="{Binding IsPurpleCardUnlimited}" Command="{Binding WritePurpleCardUnlimitedCommand}" Content="紫卡可用"/>
+                            <CheckBox IsChecked="{Binding IsPlantPurpleCard}" Command="{Binding WritePlantPurpleCardCommand}" Content="紫卡直接种植"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>

@@ -41,6 +41,7 @@ namespace PVZToolWPF
             this.ReadPlantOverlap();
             this.ReadCheat();
             ReadPurpleCardUnlimited();
+            ReadPlantPurpleCard();
         }
         public MainWindowViewModel()
         {
@@ -461,6 +462,32 @@ namespace PVZToolWPF
                 value = 0xC3;
             }
             MemoryUtil.WriteProcessMemoryBytes([value], address);
+        }
+
+        /// <summary>
+        /// 紫卡直接种植
+        /// </summary>
+        [ObservableProperty]
+        private bool isPlantPurpleCard = false;
+        private void ReadPlantPurpleCard()
+        {
+            int address = 0x40E477;
+            short value = MemoryUtil.ReadProcessMemoryShort(address);
+            if(value != 0x4674)
+            {
+                this.IsPlantPurpleCard = true;
+            }
+        }
+        [RelayCommand]
+        private void WritePlantPurpleCard()
+        {
+            int address = 0x40E477;
+            short value = 0x4674;
+            if(this.IsPlantPurpleCard)
+            {
+                value = 0x46EB;
+            }
+            MemoryUtil.WriteProcessMemoryShort(value, address);
         }
         #endregion
     }
