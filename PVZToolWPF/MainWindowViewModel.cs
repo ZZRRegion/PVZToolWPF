@@ -57,6 +57,12 @@ namespace PVZToolWPF
             this.plantNums.Add("豌豆射手");
             this.plantNums.Add("向日葵");
             this.plantNums.Add("樱桃炸弹");
+
+            this.zombieNums.Add("僵尸");
+            this.zombieNums.Add("摇旗僵尸");
+            this.zombieNums.Add("路障僵尸");
+            this.zombieNums.Add("撑杆僵尸");
+            this.zombieNums.Add("铁桶僵尸");
         }
         [ObservableProperty]
         private bool isAutoCollect = false;
@@ -319,6 +325,88 @@ namespace PVZToolWPF
                 bys = [0xE9, 0x20, 0x09, 0x00, 0x00, 0x90];
             }
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
+        #region 僵尸种植call
+        [ObservableProperty]
+        private byte zombieXAxis = 6;
+        [ObservableProperty]
+        private byte zombieYAxis = 3;
+        [ObservableProperty]
+        private byte zombieNum = 3;
+        [ObservableProperty]
+        private ObservableCollection<string> zombieNums = new();
+        nint zombieCallBuf = nint.Zero;
+        [RelayCommand]
+        private void ZombieCall()
+        {
+            if(this.zombieCallBuf == nint.Zero)
+            {
+                this.zombieCallBuf = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+            }
+            byte[] bys = [
+                0x60, //pushad
+                0x6A , 0x04 , //push 4 X轴
+                0x6A , 0x03 , //push 3 僵尸ID
+                0xB8 , 0x02 , 0x00 , 0x00 , 0x00 , // mov eax,2 Y轴
+                0x8B , 0x0D , 0xC0 , 0x9E , 0x6A , 0x00 , //mov ecx,[6a9ec0]
+                0x8B , 0x89 , 0x68 , 0x07 , 0x00 , 0x00 , // mov ecx,[ecx+768]
+                0x8B , 0x89 , 0x60 , 0x01 , 0x00 , 0x00 , // mov ecx,[ecx+160]
+                0xE8 , 0xCF , 0xA0 , 0xC1 , 0xFF , //cal 42a0f0
+                0x61 , //popad
+                0xC3   //ret
+                ];
+            bys[2] = this.ZombieXAxis;
+            bys[4] = this.ZombieNum;
+            bys[6] = this.ZombieYAxis;
+            int address = 0x42a0f0 - (int)zombieCallBuf - bys.Length + 2;
+            byte[] bs = BitConverter.GetBytes(address);
+            bys[bys.Length - 6] = bs[0];
+            bys[bys.Length - 5] = bs[1];
+            bys[bys.Length - 4] = bs[2];
+            bys[bys.Length - 3] = bs[3];
+
+            MemoryUtil.WriteProcessMemoryBytes(bys, (int)zombieCallBuf);
+            Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, zombieCallBuf, nint.Zero, 0, out _);
+            Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
+            hthread.Close();
+        }
+        [RelayCommand]
+        private void ZombieCallY()
+        {
+            if (this.zombieCallBuf == nint.Zero)
+            {
+                this.zombieCallBuf = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+            }
+            byte[] bys = [
+                0x60, //pushad
+                0x6A , 0x04 , //push 4 X轴
+                0x6A , 0x03 , //push 3 僵尸ID
+                0xB8 , 0x02 , 0x00 , 0x00 , 0x00 , // mov eax,2 Y轴
+                0x8B , 0x0D , 0xC0 , 0x9E , 0x6A , 0x00 , //mov ecx,[6a9ec0]
+                0x8B , 0x89 , 0x68 , 0x07 , 0x00 , 0x00 , // mov ecx,[ecx+768]
+                0x8B , 0x89 , 0x60 , 0x01 , 0x00 , 0x00 , // mov ecx,[ecx+160]
+                0xE8 , 0xCF , 0xA0 , 0xC1 , 0xFF , //cal 42a0f0
+                0x61 , //popad
+                0xC3   //ret
+                ];
+            bys[2] = this.ZombieXAxis;
+            for (int i = 0; i < 5; i++)
+            {
+                bys[4] = this.ZombieNum;
+                bys[6] = (byte)i;
+                int address = 0x42a0f0 - (int)zombieCallBuf - bys.Length + 2;
+                byte[] bs = BitConverter.GetBytes(address);
+                bys[bys.Length - 6] = bs[0];
+                bys[bys.Length - 5] = bs[1];
+                bys[bys.Length - 4] = bs[2];
+                bys[bys.Length - 3] = bs[3];
+
+                MemoryUtil.WriteProcessMemoryBytes(bys, (int)zombieCallBuf);
+                Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, zombieCallBuf, nint.Zero, 0, out _);
+                Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
+                hthread.Close();
+            }
         }
         #endregion
     }

@@ -55,6 +55,16 @@
                             <Button Command="{Binding AllPlantCallCommand}" Content="全屏植物"/>
                             <CheckBox IsChecked="{Binding AllowPlantOverlap}" Command="{Binding PlantOverlapCommand}" Content="植物重叠"/>
                         </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="僵尸X："/>
+                            <ComboBox Width="100" SelectedIndex="{Binding ZombieXAxis}" ItemsSource="{Binding XAxiss}"/>
+                            <TextBlock Text="Y:"/>
+                            <ComboBox Width="100" SelectedIndex="{Binding ZombieYAxis}" ItemsSource="{Binding YAxiss}"/>
+                            <TextBlock Text="僵尸类型："/>
+                            <ComboBox Width="100" SelectedIndex="{Binding ZombieNum}" ItemsSource="{Binding ZombieNums}"/>
+                            <Button Command="{Binding ZombieCallCommand}" Content="种植僵尸call"/>
+                            <Button Command="{Binding ZombieCallYCommand}" Content="Y列僵尸"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
 
