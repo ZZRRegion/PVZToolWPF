@@ -65,6 +65,9 @@
                             <Button Command="{Binding ZombieCallCommand}" Content="种植僵尸call"/>
                             <Button Command="{Binding ZombieCallYCommand}" Content="Y列僵尸"/>
                         </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsCheat}" Command="{Binding WriteCheatCommand}" Content="作弊标志"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
 

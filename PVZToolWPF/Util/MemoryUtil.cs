@@ -31,6 +31,11 @@ namespace PVZToolWPF.Util
             Marshal.FreeCoTaskMem(buf);
             return bys;
         }
+        public static int ReadProcessMemoryInt(int baseAddr, int one)
+        {
+            baseAddr = ReadProcessMemoryInt(baseAddr) + one;
+            return ReadProcessMemoryInt(baseAddr);
+        }
         public static int ReadProcessMemoryInt(int baseAddr, int one, int two)
         {
             int value = 0;
@@ -134,7 +139,20 @@ namespace PVZToolWPF.Util
             Marshal.FreeCoTaskMem(buf);
             return true;
         }
-        
+        public static bool WriteProcessMemoryInt(int value, int baseAddr, int one)
+        {
+            bool flag = false;
+            nint buf = Marshal.AllocCoTaskMem(4);
+            int address = baseAddr;
+            if (Kernel32.ReadProcessMemory(HProcess, address, buf, 4, out _))
+            {
+                address = Marshal.ReadInt32(buf) + one;
+                Marshal.WriteInt32(buf, value);
+                flag = Kernel32.WriteProcessMemory(HProcess, address, buf, 4, out _);
+            }
+            Marshal.FreeCoTaskMem(buf);
+            return flag;
+        }
         public static bool WriteProcessMemoryInt(int value, int baseAddr)
         {
             Kernel32.MEM_PROTECTION oldProtection = Kernel32.MEM_PROTECTION.PAGE_NOCACHE;

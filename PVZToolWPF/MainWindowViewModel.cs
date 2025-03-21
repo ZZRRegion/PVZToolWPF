@@ -39,6 +39,7 @@ namespace PVZToolWPF
             this.ReadAutoCollect2();
             this.ReadBulletStacking();
             this.ReadPlantOverlap();
+            this.ReadCheat();
         }
         public MainWindowViewModel()
         {
@@ -407,6 +408,29 @@ namespace PVZToolWPF
                 Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
                 hthread.Close();
             }
+        }
+        #endregion
+        #region 紫卡无限制
+        [ObservableProperty]
+        private bool isCheat = false;
+        private void ReadCheat()
+        {
+            int address = 0x6a9ec0;
+            int flag = MemoryUtil.ReadProcessMemoryInt(address, 0x814);
+            if(flag == 1)
+            {
+                this.IsCheat = true;
+            }
+        }
+        [RelayCommand]
+        private void WriteCheat()
+        {
+            int value = 0;
+            if(this.IsCheat)
+            {
+                value = 1;
+            }
+            MemoryUtil.WriteProcessMemoryInt(value, 0x6a9ec0, 0x814);
         }
         #endregion
     }
