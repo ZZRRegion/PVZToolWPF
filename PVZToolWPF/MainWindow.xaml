@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PVZToolWPF"
         xmlns:view="clr-namespace:PVZToolWPF.View"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen"
-        Title="{Binding Title}" FontSize="20" Loaded="Window_Loaded" Height="450" Width="860">
+        Title="{Binding Title}" FontSize="20" Loaded="Window_Loaded" Height="600" Width="860">
     <Window.DataContext>
         <local:MainWindowViewModel x:Name="viewModel"/>
     </Window.DataContext>

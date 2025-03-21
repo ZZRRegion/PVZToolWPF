@@ -394,22 +394,25 @@ namespace PVZToolWPF
                 0x61 , //popad
                 0xC3   //ret
                 ];
-            bys[2] = this.ZombieXAxis;
-            for (int i = 0; i < 5; i++)
+            for (byte j = 4; j <= 9; j++)
             {
-                bys[4] = this.ZombieNum;
-                bys[6] = (byte)i;
-                int address = 0x42a0f0 - (int)zombieCallBuf - bys.Length + 2;
-                byte[] bs = BitConverter.GetBytes(address);
-                bys[bys.Length - 6] = bs[0];
-                bys[bys.Length - 5] = bs[1];
-                bys[bys.Length - 4] = bs[2];
-                bys[bys.Length - 3] = bs[3];
+                bys[2] = j;
+                for (int i = 0; i < 5; i++)
+                {
+                    bys[4] = this.ZombieNum;
+                    bys[6] = (byte)i;
+                    int address = 0x42a0f0 - (int)zombieCallBuf - bys.Length + 2;
+                    byte[] bs = BitConverter.GetBytes(address);
+                    bys[bys.Length - 6] = bs[0];
+                    bys[bys.Length - 5] = bs[1];
+                    bys[bys.Length - 4] = bs[2];
+                    bys[bys.Length - 3] = bs[3];
 
-                MemoryUtil.WriteProcessMemoryBytes(bys, (int)zombieCallBuf);
-                Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, zombieCallBuf, nint.Zero, 0, out _);
-                Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
-                hthread.Close();
+                    MemoryUtil.WriteProcessMemoryBytes(bys, (int)zombieCallBuf);
+                    Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, zombieCallBuf, nint.Zero, 0, out _);
+                    Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
+                    hthread.Close();
+                }
             }
         }
         #endregion
