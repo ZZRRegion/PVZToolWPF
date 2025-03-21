@@ -53,6 +53,7 @@
                                 <Run Text="{Binding PlantCallAddr}"/>
                             </TextBlock>
                             <Button Command="{Binding AllPlantCallCommand}" Content="全屏植物"/>
+                            <CheckBox IsChecked="{Binding AllowPlantOverlap}" Command="{Binding PlantOverlapCommand}" Content="植物重叠"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>

@@ -117,6 +117,7 @@ namespace PVZToolWPF.Util
         }
         public static bool WriteProcessMemoryBytes(byte[] bys, int baseAddr)
         {
+            //修改目标内存地址权限
             Kernel32.VirtualProtectEx(HProcess, baseAddr, bys.Length, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE, out var old);
             bool flag = Kernel32.WriteProcessMemory(HProcess, baseAddr, bys, bys.Length, out _);
             Kernel32.VirtualProtectEx(HProcess, baseAddr, bys.Length, old, out old);

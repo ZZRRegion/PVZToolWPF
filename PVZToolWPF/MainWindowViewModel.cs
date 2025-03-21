@@ -38,6 +38,7 @@ namespace PVZToolWPF
             this.ReadAutoCollect();
             this.ReadAutoCollect2();
             this.ReadBulletStacking();
+            this.ReadPlantOverlap();
         }
         public MainWindowViewModel()
         {
@@ -289,6 +290,35 @@ namespace PVZToolWPF
                 }
             }
            
+        }
+        #endregion
+        #region 植物重叠
+        [ObservableProperty]
+        private bool allowPlantOverlap = false;
+        private void ReadPlantOverlap()
+        {
+            byte[] bys = new byte[] { 0x0F, 0x84, 0x1F, 0x09, 0x00,0x00 };
+            int address = 0x40FE2F;
+            byte[] rs = MemoryUtil.ReadProcessMemoryBytes(address, 6);
+            for(int i = 0; i < bys.Length; i++)
+            {
+                if (bys[i] != rs[i])
+                {
+                    this.AllowPlantOverlap = true;
+                    break;
+                }
+            }
+        }
+        [RelayCommand]
+        private void PlantOverlap()
+        {
+            byte[] bys = [0x0F, 0x84, 0x1F, 0x09, 0x00, 0x00];
+            int address = 0x40FE2F;
+            if(this.AllowPlantOverlap)
+            {
+                bys = [0xE9, 0x20, 0x09, 0x00, 0x00, 0x90];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion
     }
