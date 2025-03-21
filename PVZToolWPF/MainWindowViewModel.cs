@@ -45,6 +45,14 @@ namespace PVZToolWPF
             {
                 this.cardNums.Add($"卡槽{i+1}");
             }
+            for(byte i = 0; i < 9; i++)
+            {
+                this.xAxiss.Add(i);
+            }
+            for(byte i = 0; i < 5; i++)
+            {
+                this.yAxiss.Add(i);
+            }
             this.plantNums.Add("豌豆射手");
             this.plantNums.Add("向日葵");
             this.plantNums.Add("樱桃炸弹");
@@ -191,16 +199,18 @@ namespace PVZToolWPF
         #endregion
         #region 种植Call
         [ObservableProperty]
-        private ObservableCollection<int> xAxiss = [];
+        private ObservableCollection<byte> xAxiss = [];
         [ObservableProperty]
-        private int xAxis = 0;
+        private byte xAxis = 0;
         [ObservableProperty]
-        private ObservableCollection<int> yAxiss = [];
+        private ObservableCollection<byte> yAxiss = [];
         [ObservableProperty]
-        private int yAxis = 0;
+        private byte yAxis = 0;
         [ObservableProperty]
-        private int plantIDCall = 0;
+        private byte plantIDCall = 2;
         private nint plantCallBuffer = nint.Zero;
+        [ObservableProperty]
+        private string plantCallAddr = string.Empty;
         [RelayCommand]
         private void PlantCall()
         {
@@ -208,6 +218,7 @@ namespace PVZToolWPF
             {
                 plantCallBuffer = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
             }
+            this.PlantCallAddr = $"{plantCallBuffer:x}";
             byte[] bys = new byte[]
                 {
                     0x60, //pushad
@@ -222,9 +233,12 @@ namespace PVZToolWPF
                     0x61, //popad
                     0xC3 // ret
                 };
+            bys[16] = this.PlantIDCall;//植物ID
+            bys[23] = this.XAxis;
+            bys[18] = this.YAxis;
             int callAddress = 0x40D120 - (int)plantCallBuffer - bys.Length + 2;
             byte[] b = BitConverter.GetBytes(callAddress);
-            bys[bys.Length - 6] = b[0];
+            bys[bys.Length - 6] = b[0]; // call指令相对地址处理
             bys[bys.Length - 5] = b[1];
             bys[bys.Length - 4] = b[2];
             bys[bys.Length - 3] = b[3];
@@ -232,6 +246,49 @@ namespace PVZToolWPF
             Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, plantCallBuffer, nint.Zero, 0, out _);
             Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
             hthread.Close();
+        }
+        [RelayCommand]
+        private void AllPlantCall()
+        {
+            if (plantCallBuffer == nint.Zero)
+            {
+                plantCallBuffer = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+            }
+            this.PlantCallAddr = $"{plantCallBuffer:x}";
+            byte[] bys = new byte[]
+                {
+                    0x60, //pushad
+                    0x8B, 0x0D, 0xC0, 0x9E, 0x6A, 0x00, //mov ecx,[6a9ec0]
+                    0x8B, 0x89, 0x68, 0x07, 0x00, 0x00, //mov ecx,[ecx+768]
+                    0x6A, 0xFF, //push -1 固定-1
+                    0x6A, 0x02, //push 2 植物ID
+                    0xB8, 0x04, 0x00, 0x00, 0x00,//mov eax,4 Y轴 
+                    0x6A, 0x06, //push 6 X轴
+                    0x51, // push ecx
+                    0xE8, 0x02, 0xD1, 0x8C, 0xFD, //call 0040D120
+                    0x61, //popad
+                    0xC3 // ret
+                };
+            for(byte x = 0; x < 9; x++)
+            {
+                for(byte y = 0; y < 5; y++)
+                {
+                    bys[16] = this.PlantIDCall;//植物ID
+                    bys[23] = x;
+                    bys[18] = y;
+                    int callAddress = 0x40D120 - (int)plantCallBuffer - bys.Length + 2;
+                    byte[] b = BitConverter.GetBytes(callAddress);
+                    bys[bys.Length - 6] = b[0]; // call指令相对地址处理
+                    bys[bys.Length - 5] = b[1];
+                    bys[bys.Length - 4] = b[2];
+                    bys[bys.Length - 3] = b[3];
+                    MemoryUtil.WriteProcessMemoryBytes(bys, (int)plantCallBuffer);
+                    Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, plantCallBuffer, nint.Zero, 0, out _);
+                    Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
+                    hthread.Close();
+                }
+            }
+           
         }
         #endregion
     }

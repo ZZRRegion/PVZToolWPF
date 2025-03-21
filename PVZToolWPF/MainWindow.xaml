@@ -36,14 +36,24 @@
                         <ComboBox SelectedIndex="{Binding PlantIndex}" ItemsSource="{Binding PlantNums}" Width="200" IsReadOnly="True"/>
                         <Button Command="{Binding ChangedCardPlantCommand}" Content="更改卡槽植物"/>
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="X轴:"/>
-                        <ComboBox SelectedIndex="{Binding XAxis}" ItemsSource="{Binding XAxiss}" Width="100"/>
-                        <TextBlock Text="Y轴："/>
-                        <ComboBox SelectedIndex="{Binding YAxis}" ItemsSource="{Binding YAxiss}" Width="100"/>
-                        <TextBlock Text="植物："/>
-                        <ComboBox ItemsSource="{Binding PlantNums}" SelectedIndex="{Binding PlantIDCall}" Width="200"/>
-                        <Button Command="{Binding PlantCallCommand}" Content="种植Call"/>
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="X轴:"/>
+                            <ComboBox SelectedIndex="{Binding XAxis}" ItemsSource="{Binding XAxiss}" Width="100"/>
+                            <TextBlock Text="Y轴："/>
+                            <ComboBox SelectedIndex="{Binding YAxis}" ItemsSource="{Binding YAxiss}" Width="100"/>
+                            <TextBlock Text="植物："/>
+                            <ComboBox ItemsSource="{Binding PlantNums}" SelectedIndex="{Binding PlantIDCall}" Width="200"/>
+                            
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding PlantCallCommand}" Content="种植Call"/>
+                            <TextBlock Width="100">
+                                <Run Text="内存地址："/>
+                                <Run Text="{Binding PlantCallAddr}"/>
+                            </TextBlock>
+                            <Button Command="{Binding AllPlantCallCommand}" Content="全屏植物"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
 
