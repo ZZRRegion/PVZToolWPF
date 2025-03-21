@@ -40,6 +40,7 @@ namespace PVZToolWPF
             this.ReadBulletStacking();
             this.ReadPlantOverlap();
             this.ReadCheat();
+            ReadPurpleCardUnlimited();
         }
         public MainWindowViewModel()
         {
@@ -411,6 +412,9 @@ namespace PVZToolWPF
         }
         #endregion
         #region 紫卡无限制
+        /// <summary>
+        /// 坐标标志
+        /// </summary>
         [ObservableProperty]
         private bool isCheat = false;
         private void ReadCheat()
@@ -431,6 +435,32 @@ namespace PVZToolWPF
                 value = 1;
             }
             MemoryUtil.WriteProcessMemoryInt(value, 0x6a9ec0, 0x814);
+        }
+
+        /// <summary>
+        /// 紫卡无限制
+        /// </summary>
+        [ObservableProperty]
+        private bool isPurpleCardUnlimited = false;
+        private void ReadPurpleCardUnlimited()
+        {
+            int address = 0x41d7d0;
+            byte value = MemoryUtil.ReadProcessMemoryByte(address);
+            if(value != 0x51)
+            {
+                this.IsPurpleCardUnlimited = true;
+            }
+        }
+        [RelayCommand]
+        private void WritePurpleCardUnlimited()
+        {
+            int address = 0x41d7d0;
+            byte value = 0x51;
+            if(this.IsPurpleCardUnlimited)
+            {
+                value = 0xC3;
+            }
+            MemoryUtil.WriteProcessMemoryBytes([value], address);
         }
         #endregion
     }

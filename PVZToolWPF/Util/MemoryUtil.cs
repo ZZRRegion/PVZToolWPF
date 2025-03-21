@@ -80,7 +80,18 @@ namespace PVZToolWPF.Util
             Marshal.FreeCoTaskMem(buf);
             return value;
         }
-        public static int ReadProcessMemoryByte(int baseAddr, int one, int two, int three)
+        public static byte ReadProcessMemoryByte(int baseAddr)
+        {
+            byte value = 0;
+            nint buf = Marshal.AllocCoTaskMem(1);
+            if(Kernel32.ReadProcessMemory(HProcess, baseAddr, buf, 1, out _))
+            {
+                value = Marshal.ReadByte(buf);
+            }
+
+            return value;
+        }
+        public static byte ReadProcessMemoryByte(int baseAddr, int one, int two, int three)
         {
             byte value = 0;
             int address = baseAddr;
