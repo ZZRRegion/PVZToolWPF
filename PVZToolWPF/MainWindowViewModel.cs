@@ -43,6 +43,7 @@ namespace PVZToolWPF
             ReadPurpleCardUnlimited();
             ReadPlantPurpleCard();
             this.SeckillHook();
+            ReadBackgroundRun();
         }
         public MainWindowViewModel()
         {
@@ -529,6 +530,36 @@ namespace PVZToolWPF
                 0xE9, 0xC9, 0xB9, 0xE0, 0xFF //jmp 52d9e8
                 ];
             MemoryUtil.WriteProcessMemoryBytes(jmps, address);
+        }
+        #endregion
+        #region 后台运行
+        [ObservableProperty]
+        private bool isBackgroundRun = false;
+        private void ReadBackgroundRun()
+        {
+            int address = 0x546310;
+            byte[] bys = [0x8B, 0x81, 0x2C, 0x03, 0x00, 0x00];
+            byte[] bs = MemoryUtil.ReadProcessMemoryBytes(address, 6);
+            for(int i = 0; i < bys.Length; i++)
+            {
+                if (bys[i] != bs[i])
+                {
+                    this.IsBackgroundRun = true;
+                    break;
+                }
+            }
+        }
+        [RelayCommand]
+        private void WriteBackgroundRun()
+        {
+            byte[] bys = [0x8B, 0x81, 0x2C, 0x03, 0x00, 0x00];
+            if(this.IsBackgroundRun)
+            {
+                bys = [0x90, 0x90, 0x90, 0x90, 0x90, 0x90];
+            }
+            int address = 0x546310;
+
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion
     }
