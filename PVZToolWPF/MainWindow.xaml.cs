@@ -13,6 +13,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using PVZToolWPF.Util;
 using PVZToolWPF.ViewModel;
+using Vanara.Extensions.Reflection;
 
 namespace PVZToolWPF
 {
@@ -21,7 +22,6 @@ namespace PVZToolWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string PVZTitle = "植物大战僵尸中文版";
         /// <summary>
         /// PVZ进程模块基址
         /// </summary>
@@ -31,6 +31,13 @@ namespace PVZToolWPF
         public MainWindow()
         {
             InitializeComponent();
+            this.viewModel.UpdateEvent += (hProcess, baseAddress, pid) => {
+                this.hprocess = hProcess;
+                this.baseAddress = baseAddress;
+                this.pid = pid;
+                this.viewModel.Title = $"{MainWindowViewModel.SoftName}-{pid:X}";
+            };
+            this.viewModel.ReloadCommand.Execute(null);
             DispatcherTimer dispatcherTimer = new()
             {
                 Interval = TimeSpan.FromMilliseconds(500),
@@ -60,38 +67,9 @@ namespace PVZToolWPF
             
         }
 
-        private bool Init()
-        {
-            string errMsg = string.Empty;
-            HWND hwnd = User32.FindWindow(null, PVZTitle);
-            if(hwnd != HWND.NULL)
-            {
-                uint tid = User32.GetWindowThreadProcessId(hwnd, out pid);
-                if(tid > 0)
-                {
-                    hprocess = Kernel32.OpenProcess(ACCESS_MASK.GENERIC_ALL, false, pid);
-                    MemoryUtil.HProcess = hprocess;
-                    HINSTANCE[] hinstances = Kernel32.EnumProcessModules(hprocess);
-                    this.baseAddress = hinstances[0].DangerousGetHandle().ToInt32();
-                    List<IPVZUpdate> updates = new()
-                    {
-                        this.viewModel,
-                        this.cardNoCD,
-                    };
-                    updates.ForEach(item =>
-                    {
-                        item.Update(hprocess, baseAddress);
-                    });
-                }
-            }
-            return true;
-        }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (this.Init())
-            {
-                this.viewModel.Title = $"{MainWindowViewModel.SoftName}-{pid:X}";
-            }
+            
         }
     }
 }

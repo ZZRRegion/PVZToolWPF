@@ -17,6 +17,7 @@
         <TabControl>
             <TabItem Header="通用">
                 <StackPanel VerticalAlignment="Center">
+                    <Button Command="{Binding ReloadCommand}" Content="重新加载"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="阳光值："/>
                         <TextBox Width="100" Text="{Binding SunValue}" />

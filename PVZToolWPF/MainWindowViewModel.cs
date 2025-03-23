@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using PVZToolWPF.Util;
 using PVZToolWPF.ViewModel;
+using Vanara.PInvoke;
 
 namespace PVZToolWPF
 {
@@ -29,6 +30,28 @@ namespace PVZToolWPF
         private bool isCardNoCD1 = false;
         [ObservableProperty]
         private bool isCardNoCD2 = false;
+        private string PVZTitle = "植物大战僵尸中文版";
+        private uint pid;
+        public event Action<Kernel32.SafeHPROCESS, int, uint>? UpdateEvent;
+        [RelayCommand]
+        private void Reload()
+        {
+            string errMsg = string.Empty;
+            HWND hwnd = User32.FindWindow(null, PVZTitle);
+            if (hwnd != HWND.NULL)
+            {
+                uint tid = User32.GetWindowThreadProcessId(hwnd, out pid);
+                if (tid > 0)
+                {
+                    hProcess = Kernel32.OpenProcess(ACCESS_MASK.GENERIC_ALL, false, pid);
+                    MemoryUtil.HProcess = hProcess;
+                    HINSTANCE[] hinstances = Kernel32.EnumProcessModules(hProcess);
+                    this.baseAddress = hinstances[0].DangerousGetHandle().ToInt32();
+                    this.UpdateEvent?.Invoke(hProcess, baseAddress,pid);
+                    this.Update(hProcess, baseAddress);
+                }
+            }
+        }
         public void Update(Kernel32.SafeHPROCESS hProcess, int baseAddress)
         {
             this.hProcess = hProcess;
