@@ -69,6 +69,7 @@ namespace PVZToolWPF
             this.SeckillHook();
             ReadBackgroundRun();
             this.ReadRandBoom();
+            this.ReadPot();
         }
         public MainWindowViewModel()
         {
@@ -287,7 +288,7 @@ namespace PVZToolWPF
                     0x61, //popad
                     0xC3 // ret
                 };
-            bys[16] = this.PlantIDCall;//植物ID
+            bys[16] = 25;// this.PlantIDCall;//植物ID
             bys[23] = this.XAxis;
             bys[18] = this.YAxis;
             int callAddress = 0x40D120 - (int)plantCallBuffer - bys.Length + 2;
@@ -656,6 +657,68 @@ namespace PVZToolWPF
                 threadBuf[threadBuf.Length - 2] = ts[2];
                 threadBuf[threadBuf.Length - 1] = ts[3];
                 MemoryUtil.WriteProcessMemoryBytes(threadBuf, (int)randBoomBuf);
+            }
+            else
+            {
+                MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            }
+        }
+        #endregion
+        #region
+        [ObservableProperty]
+        private bool isPot = false;
+        private void ReadPot()
+        {
+            int address = 0x44DBF4;
+            byte[] bys = [0x83, 0x7D, 0x4C, 0x00, 0x0F, 0x8E, 0x18, 0x03, 0x00, 0x00];
+            byte[] bs = MemoryUtil.ReadProcessMemoryBytes(address, bys.Length);
+            for(int i = 0; i < bys.Length; i++)
+            {
+                if (bys[i] != bs[i])
+                {
+                    this.IsPot = true;
+                    break;
+                }
+            }
+        }
+        private nint potThreadBuf = nint.Zero;
+        [RelayCommand]
+        private void WritePot()
+        {
+            int address = 0x44DBF4;
+            byte[] bys = [0x83, 0x7D, 0x4C, 0x00, 0x0F, 0x8E, 0x18, 0x03, 0x00, 0x00];
+            if(this.IsPot)
+            {
+                if(potThreadBuf == nint.Zero)
+                {
+                    potThreadBuf = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+                }
+                byte[] jmpBys = [
+                    0xE9, 0x07, 0x24, 0x40, 0x00, //jmp potThreadBuf
+                    0x0F, 0x1F, 0x44, 0x00, 0x00//nop
+                    ];
+                int addr = (int)potThreadBuf - 0x44DBF4 - 5;
+                byte[] ts = BitConverter.GetBytes(addr);
+                jmpBys[1] = ts[0];
+                jmpBys[2] = ts[1];
+                jmpBys[3] = ts[2];
+                jmpBys[4] = ts[3];
+                MemoryUtil.WriteProcessMemoryBytes(jmpBys, address);
+
+                byte[] buf = [
+                    0xC7, 0x45, 0x4C, 0x32, 0x00, 0x00, 0x00, //[ebp+4C],50
+                    0x83, 0x7D, 0x4C, 0x00, //com dword ptr[ebp+4C],00
+                    0x0F, 0x8E, 0x05, 0xDF, 0xBF, 0xFF, //jng 44DF16
+                    0xE9, 0xE8, 0xDB, 0xBF, 0xFF //jmp 44DBFE
+                    ];
+                addr = 0x44DBFE - (int)potThreadBuf - buf.Length;
+                ts = BitConverter.GetBytes(addr);
+                buf[buf.Length - 4] = ts[0];
+                buf[buf.Length - 3] = ts[1];
+                buf[buf.Length - 2] = ts[2];
+                buf[buf.Length - 1] = ts[3];
+                MemoryUtil.WriteProcessMemoryBytes(buf, (int)potThreadBuf);
+
             }
             else
             {
