@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Input;
 using PVZToolWPF.Util;
 using PVZToolWPF.ViewModel;
@@ -67,6 +68,7 @@ namespace PVZToolWPF
             ReadPlantPurpleCard();
             this.SeckillHook();
             ReadBackgroundRun();
+            this.ReadRandBoom();
         }
         public MainWindowViewModel()
         {
@@ -91,7 +93,24 @@ namespace PVZToolWPF
             this.zombieNums.Add("路障僵尸");
             this.zombieNums.Add("撑杆僵尸");
             this.zombieNums.Add("铁桶僵尸");
+            DispatcherTimer dispatcherTimer = new()
+            {
+                Interval = TimeSpan.FromMilliseconds(200),
+            };
+            dispatcherTimer.Tick += DispatcherTimer_Tick;
+            dispatcherTimer.Start();
         }
+
+        private void DispatcherTimer_Tick(object? sender, EventArgs e)
+        {
+            if(!this.hProcess.IsInvalid && this.IsRandBoom)
+            {
+                int address = 0x6bbf20; //这是子弹的赋值地址
+                int value = Random.Shared.Next(0, 13);
+                MemoryUtil.WriteProcessMemoryInt(value, address);
+            }
+        }
+
         [ObservableProperty]
         private bool isAutoCollect = false;
         [ObservableProperty]
@@ -583,6 +602,65 @@ namespace PVZToolWPF
             int address = 0x546310;
 
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
+        #region 随机子弹
+        [ObservableProperty]
+        private bool isRandBoom = false;
+        private void ReadRandBoom()
+        {
+            byte[] bys = [0x89, 0x45, 0x5C, 0x8B, 0xC6];
+            int address = 0x46c769;
+            byte[] bs = MemoryUtil.ReadProcessMemoryBytes(address, 5);
+            for(int i = 0; i < bys.Length; i++)
+            {
+                if (bys[i] != bs[i])
+                {
+                    this.IsRandBoom = true;
+                    break;
+                }
+            }
+
+        }
+        private nint randBoomBuf = nint.Zero;
+        [RelayCommand]
+        private void WriteRandBoom()
+        {
+            byte[] bys = [0x89, 0x45, 0x5C, 0x8B, 0xC6];//原指令
+            int address = 0x46c769;
+            if(randBoomBuf == nint.Zero)
+            {
+                randBoomBuf = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+            }
+            if(this.IsRandBoom)
+            {
+                byte[] bs = [0xE9, 0x92, 0x38, 0xF8, 0x01]; //jmp randBoomBuf
+                int jmpaddr = (int)randBoomBuf - 0x46c76e;
+                byte[] ts = BitConverter.GetBytes(jmpaddr);
+                bs[1] = ts[0];
+                bs[2] = ts[1];
+                bs[3] = ts[2];
+                bs[4] = ts[3];
+                MemoryUtil.WriteProcessMemoryBytes(bs, address);
+
+                byte[] threadBuf = [
+                    0x8B, 0x05, 0x20, 0xBF, 0x6B, 0x00, //mov eax,[6bbf20]
+                    0x89, 0x45, 0x5C, //mov [ebp+5c],eax
+                    0x8B, 0xC6, //mov eax,esi
+                    0xE9, 0x5E, 0xC7, 0x07, 0xFE //jmp 46c76e
+                    ];
+                jmpaddr = 0x46c76E -(int)randBoomBuf - threadBuf.Length;
+                ts = BitConverter.GetBytes(jmpaddr);
+                threadBuf[threadBuf.Length - 4] = ts[0];
+                threadBuf[threadBuf.Length - 3] = ts[1];
+                threadBuf[threadBuf.Length - 2] = ts[2];
+                threadBuf[threadBuf.Length - 1] = ts[3];
+                MemoryUtil.WriteProcessMemoryBytes(threadBuf, (int)randBoomBuf);
+            }
+            else
+            {
+                MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            }
         }
         #endregion
     }

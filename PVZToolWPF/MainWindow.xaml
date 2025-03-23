@@ -74,6 +74,7 @@
                         <StackPanel Orientation="Horizontal">
                             <Button Command="{Binding SeckillCommand}" Content="全屏秒杀"/>
                             <CheckBox IsChecked="{Binding IsBackgroundRun}" Command="{Binding WriteBackgroundRunCommand}" Content="后台运行"/>
+                            <CheckBox IsChecked="{Binding IsRandBoom}" Command="{Binding WriteRandBoomCommand}" Content="随机子弹"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
