@@ -76,6 +76,7 @@
                             <CheckBox IsChecked="{Binding IsBackgroundRun}" Command="{Binding WriteBackgroundRunCommand}" Content="后台运行"/>
                             <CheckBox IsChecked="{Binding IsRandBoom}" Command="{Binding WriteRandBoomCommand}" Content="随机子弹"/>
                             <CheckBox IsChecked="{Binding IsPot}" Command="{Binding WritePotCommand}" Content="陶罐透视"/>
+                            <CheckBox IsChecked="{Binding IsConveyorDelay}" Command="{Binding WriteConveyorDelayCommand}" Content="传送带无延迟"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>

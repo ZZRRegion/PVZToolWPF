@@ -70,6 +70,7 @@ namespace PVZToolWPF
             ReadBackgroundRun();
             this.ReadRandBoom();
             this.ReadPot();
+            this.ReadConveyorDelay();
         }
         public MainWindowViewModel()
         {
@@ -664,7 +665,7 @@ namespace PVZToolWPF
             }
         }
         #endregion
-        #region
+        #region 陶罐透视
         [ObservableProperty]
         private bool isPot = false;
         private void ReadPot()
@@ -724,6 +725,42 @@ namespace PVZToolWPF
             {
                 MemoryUtil.WriteProcessMemoryBytes(bys, address);
             }
+        }
+        #endregion
+        #region 传送带无延迟
+        [ObservableProperty]
+        private bool isConveyorDelay = false;
+        private void ReadConveyorDelay()
+        {
+            int address = 0x422D17;
+            byte[] bys = [0x83, 0x43, 0x5C, 0xFF];
+            byte[] bs = MemoryUtil.ReadProcessMemoryBytes(address, bys.Length);
+            for(int i = 0; i < bys.Length; i++)
+            {
+                if (bys[i] != bs[i])
+                {
+                    this.IsConveyorDelay = true;
+                    break;
+                }
+            }
+        }
+        [RelayCommand]
+        private void WriteConveyorDelay()
+        {
+            int address = 0x422D17;
+            byte[] bys = [0x83, 0x43, 0x5C, 0xFF];
+            if(this.IsConveyorDelay)
+            {
+                bys = [0x83, 0x43, 0x5C, 0x80];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            address = 0x489CA1;
+            bys = [0x85, 0xC0];
+            if(this.IsConveyorDelay)
+            {
+                bys = [0x31, 0xC0];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion
     }
