@@ -78,6 +78,7 @@
                             <CheckBox IsChecked="{Binding IsPot}" Command="{Binding WritePotCommand}" Content="陶罐透视"/>
                             <CheckBox IsChecked="{Binding IsConveyorDelay}" Command="{Binding WriteConveyorDelayCommand}" Content="传送带无延迟"/>
                             <CheckBox IsChecked="{Binding IsVerticalPlant}" Command="{Binding WriteVerticalPlantCommand}" Content="竖排种植"/>
+                            <CheckBox IsChecked="{Binding IsChangedPlantColor}" Command="{Binding WriteChangedPlantColorCommand}" Content="植物变红"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
