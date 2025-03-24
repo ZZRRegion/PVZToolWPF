@@ -71,6 +71,7 @@ namespace PVZToolWPF
             this.ReadRandBoom();
             this.ReadPot();
             this.ReadConveyorDelay();
+            this.ReadVerticalPlant();
         }
         public MainWindowViewModel()
         {
@@ -759,6 +760,35 @@ namespace PVZToolWPF
             if(this.IsConveyorDelay)
             {
                 bys = [0x31, 0xC0];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
+        #region 竖排种植
+        [ObservableProperty]
+        private bool isVerticalPlant = false;
+        private void ReadVerticalPlant()
+        {
+            int address = 0x410AE6;
+            byte[] bys = [0x0F, 0x85, 0xE5, 0x00, 0x00, 0x00];
+            byte[] bs = MemoryUtil.ReadProcessMemoryBytes(address, bys.Length);
+            for(int i = 0; i < bys.Length; i++)
+            {
+                if (bys[i] != bs[i])
+                {
+                    this.IsVerticalPlant = true;
+                    break;
+                }
+            }
+        }
+        [RelayCommand]
+        private void WriteVerticalPlant()
+        {
+            int address = 0x410AE6;
+            byte[] bys = [0x0F, 0x85, 0xE5, 0x00, 0x00, 0x00];
+            if(this.IsVerticalPlant)
+            {
+                bys = [0x90, 0x90, 0x90, 0x90, 0x90, 0x90];
             }
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
