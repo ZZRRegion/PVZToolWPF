@@ -75,6 +75,7 @@ namespace PVZToolWPF
             this.ReadConveyorDelay();
             this.ReadVerticalPlant();
             this.ReadMagnetShroomTime();
+            ReadChangedPlantColor();
         }
         public MainWindowViewModel()
         {
@@ -815,6 +816,36 @@ namespace PVZToolWPF
             int address = 0x461637;
             byte[] bys = [0xc7, 0x45, 0x54, .. vs];
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
+        #region 更改植物颜色
+        [ObservableProperty]
+        private bool isChangedPlantColor = false;
+        private void ReadChangedPlantColor()
+        {
+            int address = 0x4636E4;
+            byte[] bys = MemoryUtil.ReadProcessMemoryBytes(address, 2);
+            byte[] bs = [0x75, 0x0E];
+            for(int i = 0; i < bys.Length; i++)
+            {
+                if(bys[i] != bs[i])
+                {
+                    this.IsChangedPlantColor = true;
+                    break;
+                }
+            }
+            
+        }
+        [RelayCommand]
+        private void WriteChangedPlantColor()
+        {
+            byte[] bs = [0x75, 0x0E];
+            int address = 0x4636E4;
+            if(this.IsChangedPlantColor)
+            {
+                bs = [0x90, 0x90];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bs, address);
         }
         #endregion
     }

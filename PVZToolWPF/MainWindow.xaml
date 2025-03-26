@@ -80,6 +80,9 @@
                             <CheckBox IsChecked="{Binding IsVerticalPlant}" Command="{Binding WriteVerticalPlantCommand}" Content="竖排种植"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
+                            <CheckBox Command="{Binding WriteChangedPlantColorCommand}" IsChecked="{Binding IsChangedPlantColor}" Content="更改植物颜色"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
                             <TextBlock Text="磁力菇冷却时间："/>
                             <TextBox Text="{Binding MagnetShroomTime}" Width="100"/>
                             <Button Command="{Binding WriteMagnetShroomTimeCommand}" Content="设置"/>
