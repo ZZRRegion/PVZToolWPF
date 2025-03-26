@@ -31,7 +31,9 @@ namespace PVZToolWPF
         private bool isCardNoCD1 = false;
         [ObservableProperty]
         private bool isCardNoCD2 = false;
+        //private string PVZTitle = "植物大战僵尸杂交版v2.3.5 ";// "植物大战僵尸中文版";
         private string PVZTitle = "植物大战僵尸中文版";
+
         private uint pid;
         public event Action<Kernel32.SafeHPROCESS, int, uint>? UpdateEvent;
         [RelayCommand]
@@ -72,6 +74,7 @@ namespace PVZToolWPF
             this.ReadPot();
             this.ReadConveyorDelay();
             this.ReadVerticalPlant();
+            this.ReadMagnetShroomTime();
         }
         public MainWindowViewModel()
         {
@@ -790,6 +793,27 @@ namespace PVZToolWPF
             {
                 bys = [0x90, 0x90, 0x90, 0x90, 0x90, 0x90];
             }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
+        #region 磁力菇冷却时间
+        [ObservableProperty]
+        private uint magnetShroomTime = 0;
+        private void ReadMagnetShroomTime()
+        {
+            int address = 0x461637;
+            byte[] bys = MemoryUtil.ReadProcessMemoryBytes(address, 7);
+            uint value = BitConverter.ToUInt32(bys, 3);
+            this.MagnetShroomTime = value;
+        }
+        [RelayCommand]
+        private void WriteMagnetShroomTime()
+        {
+            if (this.MagnetShroomTime <= 0)
+                return;
+            byte[] vs = BitConverter.GetBytes(this.MagnetShroomTime);
+            int address = 0x461637;
+            byte[] bys = [0xc7, 0x45, 0x54, .. vs];
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion

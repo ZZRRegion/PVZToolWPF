@@ -79,6 +79,11 @@
                             <CheckBox IsChecked="{Binding IsConveyorDelay}" Command="{Binding WriteConveyorDelayCommand}" Content="传送带无延迟"/>
                             <CheckBox IsChecked="{Binding IsVerticalPlant}" Command="{Binding WriteVerticalPlantCommand}" Content="竖排种植"/>
                         </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="磁力菇冷却时间："/>
+                            <TextBox Text="{Binding MagnetShroomTime}" Width="100"/>
+                            <Button Command="{Binding WriteMagnetShroomTimeCommand}" Content="设置"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
 
