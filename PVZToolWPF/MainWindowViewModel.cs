@@ -76,6 +76,7 @@ namespace PVZToolWPF
             this.ReadVerticalPlant();
             this.ReadMagnetShroomTime();
             ReadChangedPlantColor();
+            ReadZombieColor();
         }
         public MainWindowViewModel()
         {
@@ -846,6 +847,63 @@ namespace PVZToolWPF
                 bs = [0x90, 0x90];
             }
             MemoryUtil.WriteProcessMemoryBytes(bs, address);
+        }
+        #endregion
+        #region 更改僵尸颜色
+        [ObservableProperty]
+        private int colorR = 0;
+        private int oldColorR = 0x80;
+        [ObservableProperty]
+        private int colorG = 0;
+        private int oldColorG = 0x40;
+        [ObservableProperty]
+        private int colorB = 0;
+        private int oldColorB = 0xc0;
+        [ObservableProperty]
+        private bool isSetZombieColor = false;
+        private void ReadZombieColor()
+        {
+            int address = 0x722820;
+            int r = MemoryUtil.ReadProcessMemoryInt(address);
+            int g = MemoryUtil.ReadProcessMemoryInt(address + 4);
+            int b = MemoryUtil.ReadProcessMemoryInt(address + 8);
+            this.ColorR = r;
+            this.ColorB = b;
+            this.ColorG = g;
+            if(this.ColorR != this.oldColorR
+                || this.ColorG != this.oldColorG
+                || this.ColorB != this.oldColorB)
+            {
+                this.IsSetZombieColor = true;
+            }
+        }
+        [RelayCommand]
+        private void WriteZombieColor()
+        {
+            int address = 0x52D2C6;
+            byte[] bys = [0x74, 0x41];
+            int r = this.oldColorR;
+            int g = this.oldColorG;
+            int b = this.oldColorB;
+            if(this.IsSetZombieColor)
+            {
+                bys = [0x90, 0x90];
+                r = this.ColorR;
+                g = this.ColorG;
+                b = this.ColorB;
+            }
+            else
+            {
+                this.ColorR = r;
+                this.ColorG = g;
+                this.ColorB = b;
+            }
+                MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            address = 0x722820;
+            MemoryUtil.WriteProcessMemoryInt(r, address);
+            MemoryUtil.WriteProcessMemoryInt(g, address + 4);
+            MemoryUtil.WriteProcessMemoryInt(b, address + 8);
+
         }
         #endregion
     }

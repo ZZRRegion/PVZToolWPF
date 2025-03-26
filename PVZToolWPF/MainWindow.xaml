@@ -81,6 +81,17 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <CheckBox Command="{Binding WriteChangedPlantColorCommand}" IsChecked="{Binding IsChangedPlantColor}" Content="更改植物颜色"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="僵尸颜色"/>
+                                <TextBlock Text="R:"/>
+                                <TextBox Text="{Binding ColorR}" Width="100"/>
+                                <TextBlock Text="G:"/>
+                                <TextBox Text="{Binding ColorG}" Width="100"/>
+                                <TextBlock Text="B:"/>
+                                <TextBox Text="{Binding ColorB}" Width="100"/>
+                                <CheckBox IsChecked="{Binding IsSetZombieColor}" Command="{Binding WriteZombieColorCommand}" Content="设置颜色"/>
+                            </StackPanel> 
+                            
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="磁力菇冷却时间："/>
