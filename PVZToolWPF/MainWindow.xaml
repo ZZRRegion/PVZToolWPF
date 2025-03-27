@@ -97,6 +97,8 @@
                             <TextBlock Text="磁力菇冷却时间："/>
                             <TextBox Text="{Binding MagnetShroomTime}" Width="100"/>
                             <Button Command="{Binding WriteMagnetShroomTimeCommand}" Content="设置"/>
+                            <CheckBox IsChecked="{Binding IsRandPlant}" Content="随机植物"/>
+                            <CheckBox IsChecked="{Binding IsRandPlant2}" Content="随机植物2"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>

@@ -117,6 +117,19 @@ namespace PVZToolWPF
                 int value = Random.Shared.Next(0, 13);
                 MemoryUtil.WriteProcessMemoryInt(value, address);
             }
+            if(!this.hProcess.IsInvalid && this.IsRandPlant)
+            {
+                int address = 0x6a9ec0;
+                int value = Random.Shared.Next(0, 50);
+                MemoryUtil.WriteProcessMemoryInt(value, address, 0x768, 0x138, 0x28);
+            }
+            if(!this.hProcess.IsInvalid 
+                &&this.randPlantBuf != nint.Zero 
+                && this.IsRandPlant2)
+            {
+                int value = Random.Shared.Next(0, 50);
+                MemoryUtil.WriteProcessMemoryInt(value, (int)randPlantBuf + 1);
+            }
         }
 
         [ObservableProperty]
@@ -904,6 +917,51 @@ namespace PVZToolWPF
             MemoryUtil.WriteProcessMemoryInt(g, address + 4);
             MemoryUtil.WriteProcessMemoryInt(b, address + 8);
 
+        }
+        #endregion
+        #region 随机植物
+        [ObservableProperty]
+        private bool isRandPlant = false;
+        [ObservableProperty]
+        private bool isRandPlant2 = false;
+        private nint randPlantBuf = nint.Zero;
+        partial void OnIsRandPlant2Changing(bool oldValue, bool newValue)
+        {
+            int address = 0x410A91;
+            if(newValue)
+            {
+                if(randBoomBuf == nint.Zero)
+                {
+                    randPlantBuf = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+                }
+                byte[] bys = [0xE9, 0x6A, 0xF5, 0x62, 0x00];
+                int offset = (int)randPlantBuf - address - 5;
+                byte[] bs = BitConverter.GetBytes(offset);
+                bys[1] = bs[0];
+                bys[2] = bs[1];
+                bys[3] = bs[2];
+                bys[4] = bs[3];
+                MemoryUtil.WriteProcessMemoryBytes(bys, address);
+
+                bys = [
+                    0xB8, 0x02, 0x00, 0x00, 0x00, 
+                    0x52, 
+                    0x50, 
+                    0xE9, 0x8A, 0x0A, 0x9D, 0xFF
+                    ];
+                offset = address + 5 - (int)randPlantBuf - bys.Length;
+                bs = BitConverter.GetBytes(offset);
+                bys[bys.Length - 4] = bs[0];
+                bys[bys.Length - 3] = bs[1];
+                bys[bys.Length - 2] = bs[2];
+                bys[bys.Length - 1] = bs[3];
+                MemoryUtil.WriteProcessMemoryBytes(bys, (int)randPlantBuf);
+            }
+            else
+            {
+                byte[] bys = [0x8B, 0x40, 0x28, 0x52, 0x50];
+                MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            }
         }
         #endregion
     }
