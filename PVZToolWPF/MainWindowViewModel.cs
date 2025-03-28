@@ -60,6 +60,12 @@ namespace PVZToolWPF
         {
             this.hProcess = hProcess;
             this.baseAddress = baseAddress;
+            this.carRunBuf = nint.Zero;
+            this.plantCallBuffer = nint.Zero;
+            this.potThreadBuf = nint.Zero;
+            this.randBoomBuf = nint.Zero;
+            this.randPlantBuf = nint.Zero;
+            this.zombieCallBuf = nint.Zero;
             this.ReadCardNoCD1();
             this.ReadCardNoCD2();
             this.ReadAutoCollect();
