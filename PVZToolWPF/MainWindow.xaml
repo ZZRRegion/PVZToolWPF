@@ -102,6 +102,7 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Button Command="{Binding WriteCarRunCommand}" Content="启动小推车"/>
+                            <Button Content="恢复小推车"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>

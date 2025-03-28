@@ -1014,5 +1014,12 @@ namespace PVZToolWPF
             }
         }
         #endregion
+        #region 恢复小推车
+        [RelayCommand]
+        private void WriteResetCar()
+        {
+
+        }
+        #endregion
     }
 }
