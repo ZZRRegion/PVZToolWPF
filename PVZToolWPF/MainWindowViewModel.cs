@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -397,7 +398,7 @@ namespace PVZToolWPF
         #endregion
         #region 僵尸种植call
         [ObservableProperty]
-        private byte zombieXAxis = 6;
+        private byte zombieXAxis = 4;
         [ObservableProperty]
         private byte zombieYAxis = 3;
         [ObservableProperty]
@@ -961,6 +962,49 @@ namespace PVZToolWPF
             {
                 byte[] bys = [0x8B, 0x40, 0x28, 0x52, 0x50];
                 MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            }
+        }
+        #endregion
+        #region 启动小推车
+        private nint carRunBuf = nint.Zero;
+        [RelayCommand]
+        private void WriteCarRun()
+        {
+            if(carRunBuf == nint.Zero)
+            {
+                carRunBuf = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+                Debug.WriteLine($"{carRunBuf:x}");
+            }
+            byte[] bys = [
+                0x60, //pushad
+                0xBE, 0x00, 0x00, 0x00, 0x00, //mov esi,0 填补推测指针值
+                0xE8, 0x95, 0x8D, 0xC1, 0xFF, // call 458DA0，需要计算相对值
+                0x61, //popad
+                0xC3 // ret
+                ];
+            int address = 0x6a9ec0;
+            int carAddr = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x100);
+
+            for (int i = 0; i < 5; i++)
+            {
+                int addr = carAddr + i * 0x48;
+                byte[] bs = BitConverter.GetBytes(addr);
+                bys[2] = bs[0];
+                bys[3] = bs[1];
+                bys[4] = bs[2];
+                bys[5] = bs[3];
+
+                address = 0x458DA0 - (int)carRunBuf - 11;
+                bs = BitConverter.GetBytes(address);
+                bys[bys.Length - 6] = bs[0];
+                bys[bys.Length - 5] = bs[1];
+                bys[bys.Length - 4] = bs[2];
+                bys[bys.Length - 3] = bs[3];
+                MemoryUtil.WriteProcessMemoryBytes(bys, (int)carRunBuf);
+
+                Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, carRunBuf, nint.Zero, 0, out _);
+                Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
+                hthread.Close();
             }
         }
         #endregion

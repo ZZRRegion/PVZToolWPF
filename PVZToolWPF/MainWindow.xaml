@@ -100,6 +100,9 @@
                             <CheckBox IsChecked="{Binding IsRandPlant}" Content="随机植物"/>
                             <CheckBox IsChecked="{Binding IsRandPlant2}" Content="随机植物2"/>
                         </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Command="{Binding WriteCarRunCommand}" Content="启动小推车"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
 
