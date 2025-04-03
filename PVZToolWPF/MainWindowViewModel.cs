@@ -1017,7 +1017,9 @@ namespace PVZToolWPF
                 0xC3 //ret
                     ];
                 int index = i;
+                //小推车指针偏移0x48
                 Array.Copy(BitConverter.GetBytes(index * 0x48), 0, bys, bys.Length - 17, 4);
+                //小推车行序号
                 Array.Copy(BitConverter.GetBytes(index), 0, bys, bys.Length - 11, 4);
                 int callAddr = 0x458000 - (int)resetCarBuf - bys.Length + 2;
                 Array.Copy(BitConverter.GetBytes(callAddr), 0, bys, bys.Length - 6, 4);
