@@ -329,9 +329,7 @@ namespace PVZToolWPF
             byte[] b = BitConverter.GetBytes(callAddress);
             Array.Copy(b, 0, bys, bys.Length - 6, 4);// call指令相对地址处理
             MemoryUtil.WriteProcessMemoryBytes(bys, (int)plantCallBuffer);
-            Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, plantCallBuffer, nint.Zero, 0, out _);
-            Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
-            hthread.Close();
+            MemoryUtil.CreateRemoteThread(plantCallBuffer);
         }
         [RelayCommand]
         private void AllPlantCall()
@@ -366,9 +364,7 @@ namespace PVZToolWPF
                     byte[] b = BitConverter.GetBytes(callAddress);
                     Array.Copy(b, 0, bys, bys.Length - 6, 4);// call指令相对地址处理
                     MemoryUtil.WriteProcessMemoryBytes(bys, (int)plantCallBuffer);
-                    Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, plantCallBuffer, nint.Zero, 0, out _);
-                    Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
-                    hthread.Close();
+                    MemoryUtil.CreateRemoteThread(plantCallBuffer);
                 }
             }
            
@@ -439,9 +435,7 @@ namespace PVZToolWPF
             byte[] bs = BitConverter.GetBytes(address);
             Array.Copy(bs, 0, bys, bys.Length - 6, 4);
             MemoryUtil.WriteProcessMemoryBytes(bys, (int)zombieCallBuf);
-            Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, zombieCallBuf, nint.Zero, 0, out _);
-            Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
-            hthread.Close();
+            MemoryUtil.CreateRemoteThread(zombieCallBuf);
         }
         [RelayCommand]
         private void ZombieCallY()
@@ -473,9 +467,7 @@ namespace PVZToolWPF
                     byte[] bs = BitConverter.GetBytes(address);
                     Array.Copy(bs, 0, bys, bys.Length - 6, 4);
                     MemoryUtil.WriteProcessMemoryBytes(bys, (int)zombieCallBuf);
-                    Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, zombieCallBuf, nint.Zero, 0, out _);
-                    Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
-                    hthread.Close();
+                    MemoryUtil.CreateRemoteThread(zombieCallBuf);
                 }
             }
         }
@@ -976,9 +968,7 @@ namespace PVZToolWPF
                 Array.Copy(bs, 0, bys, bys.Length - 6, 4);
                 MemoryUtil.WriteProcessMemoryBytes(bys, (int)carRunBuf);
 
-                Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, carRunBuf, nint.Zero, 0, out _);
-                Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
-                hthread.Close();
+                MemoryUtil.CreateRemoteThread(carRunBuf);
             }
         }
         #endregion
