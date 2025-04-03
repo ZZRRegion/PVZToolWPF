@@ -239,7 +239,7 @@ namespace PVZToolWPF
         private void ReadBulletStacking()
         {
             int address = 0x464A96;
-            byte[] oldbys = { 0x0F, 0x85, 0x98, 0xFE, 0xFF, 0xFF };
+            byte[] oldbys = [0x0F, 0x85, 0x98, 0xFE, 0xFF, 0xFF];
             byte[] bys = MemoryUtil.ReadProcessMemoryBytes(address, 6);
             for(int i = 0; i < 6; i++)
             {
@@ -254,7 +254,7 @@ namespace PVZToolWPF
         private void BulletStacking()
         {
             int address = 0x464A96;
-            byte[] bys = { 0x0F, 0x85, 0x98, 0xFE, 0xFF, 0xFF };
+            byte[] bys = [0x0F, 0x85, 0x98, 0xFE, 0xFF, 0xFF];
             if(this.IsBulletStacking)
             {
                 for(int i = 0; i < 6; i++)
@@ -304,8 +304,8 @@ namespace PVZToolWPF
                 plantCallBuffer = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
             }
             this.PlantCallAddr = $"{plantCallBuffer:x}";
-            byte[] bys = new byte[]
-                {
+            byte[] bys =
+                [
                     0x60, //pushad
                     0x8B, 0x0D, 0xC0, 0x9E, 0x6A, 0x00, //mov ecx,[6a9ec0]
                     0x8B, 0x89, 0x68, 0x07, 0x00, 0x00, //mov ecx,[ecx+768]
@@ -317,7 +317,7 @@ namespace PVZToolWPF
                     0xE8, 0x02, 0xD1, 0x8C, 0xFD, //call 0040D120
                     0x61, //popad
                     0xC3 // ret
-                };
+                ];
             bys[16] = this.PlantIDCall;//植物ID
             bys[23] = this.XAxis;
             bys[18] = this.YAxis;
@@ -337,8 +337,8 @@ namespace PVZToolWPF
                 plantCallBuffer = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
             }
             this.PlantCallAddr = $"{plantCallBuffer:x}";
-            byte[] bys = new byte[]
-                {
+            byte[] bys =
+                [
                     0x60, //pushad
                     0x8B, 0x0D, 0xC0, 0x9E, 0x6A, 0x00, //mov ecx,[6a9ec0]
                     0x8B, 0x89, 0x68, 0x07, 0x00, 0x00, //mov ecx,[ecx+768]
@@ -350,7 +350,7 @@ namespace PVZToolWPF
                     0xE8, 0x02, 0xD1, 0x8C, 0xFD, //call 0040D120
                     0x61, //popad
                     0xC3 // ret
-                };
+                ];
             for(byte x = 0; x < 9; x++)
             {
                 for(byte y = 0; y < 5; y++)
@@ -375,7 +375,7 @@ namespace PVZToolWPF
         private bool allowPlantOverlap = false;
         private void ReadPlantOverlap()
         {
-            byte[] bys = new byte[] { 0x0F, 0x84, 0x1F, 0x09, 0x00,0x00 };
+            byte[] bys = [0x0F, 0x84, 0x1F, 0x09, 0x00, 0x00];
             int address = 0x40FE2F;
             byte[] rs = MemoryUtil.ReadProcessMemoryBytes(address, 6);
             for(int i = 0; i < bys.Length; i++)
@@ -407,7 +407,7 @@ namespace PVZToolWPF
         [ObservableProperty]
         private byte zombieNum = 3;
         [ObservableProperty]
-        private ObservableCollection<string> zombieNums = new();
+        private ObservableCollection<string> zombieNums = [];
         nint zombieCallBuf = nint.Zero;
         [RelayCommand]
         private void ZombieCall()
