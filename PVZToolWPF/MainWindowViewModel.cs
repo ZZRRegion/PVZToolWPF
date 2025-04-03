@@ -13,7 +13,9 @@ using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Input;
 using PVZToolWPF.Util;
 using PVZToolWPF.ViewModel;
+using Vanara;
 using Vanara.PInvoke;
+using static Vanara.PInvoke.Gdi32;
 
 namespace PVZToolWPF
 {
@@ -68,6 +70,7 @@ namespace PVZToolWPF
             this.randBoomBuf = nint.Zero;
             this.randPlantBuf = nint.Zero;
             this.zombieCallBuf = nint.Zero;
+            resetCarBuf = nint.Zero;
             this.ReadCardNoCD1();
             this.ReadCardNoCD2();
             this.ReadAutoCollect();
@@ -86,6 +89,7 @@ namespace PVZToolWPF
             this.ReadMagnetShroomTime();
             ReadChangedPlantColor();
             ReadZombieColor();
+            ReadResetCar();
         }
         public MainWindowViewModel()
         {
@@ -979,10 +983,57 @@ namespace PVZToolWPF
         }
         #endregion
         #region 恢复小推车
+        [ObservableProperty]
+        private bool isResetCar = false;
+        private void ReadResetCar()
+        {
+            int address = 0x458D1F;
+            byte by = MemoryUtil.ReadProcessMemoryByte(address);
+            this.IsResetCar = by == 0x00;
+        }
+        [RelayCommand]
+        private void SetResetCar()
+        {
+            int address = 0x458D1F;
+            byte by = 0x01;
+            if(this.IsResetCar)
+            {
+                by = 0x00;
+                int addr = 0x00679BF8;
+                MemoryUtil.WriteProcessMemoryFloat(-20, addr);
+            }
+            MemoryUtil.WriteProcessMemoryBytes([by], address);
+        }
+        private nint resetCarBuf = nint.Zero;
         [RelayCommand]
         private void WriteResetCar()
         {
-
+            if(resetCarBuf == nint.Zero)
+            {
+                resetCarBuf = MemoryUtil.VirtualAllocEx();
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                byte[] bys = [
+                    0x60,//pushad
+                0xA1, 0xC0, 0x9E, 0x6A, 0x00,//mov eax,[6a9ec0]
+                0x8B, 0x80, 0x68, 0x07, 0x00, 0x00, //mov eax,[eax+768]
+                0x8B, 0x80, 0x00, 0x01,0x00, 0x00,  // mov eax,[eax+100]
+                0x05, 0x00, 0x00, 0x00, 0x00, //add eax,0
+                0x50, // push eax 小推车指针
+                0xB8, 0x00, 0x00, 0x00, 0x00, //mov eax,0 行
+                0xE8, 0xE3, 0x7F, 0xC9, 0xFF, // call 458000
+                0x61, //popad
+                0xC3 //ret
+                    ];
+                int index = i;
+                Array.Copy(BitConverter.GetBytes(index * 0x48), 0, bys, bys.Length - 17, 4);
+                Array.Copy(BitConverter.GetBytes(index), 0, bys, bys.Length - 11, 4);
+                int callAddr = 0x458000 - (int)resetCarBuf - bys.Length + 2;
+                Array.Copy(BitConverter.GetBytes(callAddr), 0, bys, bys.Length - 6, 4);
+                MemoryUtil.WriteProcessMemoryBytes(bys, (int)resetCarBuf);
+                MemoryUtil.CreateRemoteThread(resetCarBuf);
+            }
         }
         #endregion
     }

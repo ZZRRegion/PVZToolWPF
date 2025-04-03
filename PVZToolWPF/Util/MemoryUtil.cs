@@ -214,6 +214,42 @@ namespace PVZToolWPF.Util
             Marshal.FreeCoTaskMem(buf);
             return flag;
         }
-
+        /// <summary>
+        /// 写浮点型数据
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="baseAddr"></param>
+        /// <returns></returns>
+        public static bool WriteProcessMemoryFloat(float value, int baseAddr)
+        {
+            Kernel32.MEM_PROTECTION oldProtection = Kernel32.MEM_PROTECTION.PAGE_NOCACHE;
+            Kernel32.VirtualProtectEx(HProcess, baseAddr, 1024, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE, out oldProtection);
+            nint buf = Marshal.AllocCoTaskMem(4);
+            Marshal.Copy(BitConverter.GetBytes(value), 0, buf, 4);
+            Kernel32.WriteProcessMemory(HProcess, baseAddr, buf, 4, out _);
+            Kernel32.VirtualProtectEx(HProcess, baseAddr, 1024, oldProtection, out _);
+            Marshal.FreeCoTaskMem(buf);
+            return true;
+        }
+        /// <summary>
+        /// 申请内存
+        /// </summary>
+        /// <returns></returns>
+        public static nint VirtualAllocEx()
+        {
+            nint buf = Kernel32.VirtualAllocEx(HProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+            return buf;
+        }
+        /// <summary>
+        /// 创建远程线程运行
+        /// </summary>
+        /// <param name="threadAddr"></param>
+        /// <returns></returns>
+        public static void CreateRemoteThread(nint threadAddr)
+        {
+            Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(HProcess, null, 0, threadAddr, nint.Zero, 0, out _);
+            Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
+            hthread.Close();
+        }
     }
 }
