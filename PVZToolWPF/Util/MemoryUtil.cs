@@ -139,6 +139,11 @@ namespace PVZToolWPF.Util
             Kernel32.VirtualProtectEx(HProcess, baseAddr, bys.Length, old, out old);
             return flag;
         }
+        public static bool WriteProcessMemoryBytes(byte[] bys, nint baseAddr)
+        {
+            //修改目标内存地址权限
+            return WriteProcessMemoryBytes(bys, (int)baseAddr);
+        }
         public static bool WriteProcessMemoryShort(short value, int baseAddr)
         {
             Kernel32.MEM_PROTECTION oldProtection = Kernel32.MEM_PROTECTION.PAGE_NOCACHE;

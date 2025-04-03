@@ -90,6 +90,7 @@ namespace PVZToolWPF
             ReadChangedPlantColor();
             ReadZombieColor();
             ReadResetCar();
+            ReadAllZombie();
         }
         public MainWindowViewModel()
         {
@@ -1025,6 +1026,48 @@ namespace PVZToolWPF
                 Array.Copy(BitConverter.GetBytes(callAddr), 0, bys, bys.Length - 6, 4);
                 MemoryUtil.WriteProcessMemoryBytes(bys, (int)resetCarBuf);
                 MemoryUtil.CreateRemoteThread(resetCarBuf);
+            }
+        }
+        #endregion
+        #region 僵尸全部出动
+        [ObservableProperty]
+        private bool isAllZombie = false;
+        private void ReadAllZombie()
+        {
+            int address = 0x413E45;
+            byte[] bys = MemoryUtil.ReadProcessMemoryBytes(address, 7);
+            this.IsAllZombie = bys[0] != 0x83 || bys[1] != 0x87 || bys[2] != 0x9C;
+        }
+        private nint allZombieBuf = nint.Zero;
+        [RelayCommand]
+        private void WriteAllZombie()
+        {
+            int address = 0x413E45;
+            byte[] bys = [0x83, 0x87, 0x9C, 0x55, 0x00, 0x00, 0xFF];
+            if (this.IsAllZombie)
+            {
+                if(allZombieBuf == nint.Zero)
+                {
+                    allZombieBuf = MemoryUtil.VirtualAllocEx();
+                }
+                bys[0] = 0xE9;
+                int jmpAddr = (int)allZombieBuf - address - 5;
+                Array.Copy(BitConverter.GetBytes(jmpAddr), 0, bys, 1, 4);
+                bys[5] = 0x66;
+                bys[6] = 0x90;
+                MemoryUtil.WriteProcessMemoryBytes(bys, address);
+                byte[] hook = [
+                    0xC7, 0x87, 0x9C, 0x55, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, //mov [edi+559c],1
+                    0x83, 0x87, 0x9C, 0x55, 0x00, 0x00,0xFF, // add [edi+559c],ff
+                    0xE9, 0x36, 0x3E, 0xE2, 0xFD //jmp 413E4C
+                    ];
+                jmpAddr = 0x413E4C - (int)allZombieBuf - hook.Length;
+                Array.Copy(BitConverter.GetBytes(jmpAddr), 0, hook, hook.Length - 4, 4);
+                MemoryUtil.WriteProcessMemoryBytes(hook, allZombieBuf);
+            }
+            else
+            {
+                MemoryUtil.WriteProcessMemoryBytes(bys, address);
             }
         }
         #endregion

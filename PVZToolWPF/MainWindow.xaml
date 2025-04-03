@@ -104,6 +104,7 @@
                             <Button Command="{Binding WriteCarRunCommand}" Content="启动小推车"/>
                             <Button IsEnabled="{Binding IsResetCar}" Command="{Binding WriteResetCarCommand}" Content="恢复小推车"/>
                             <CheckBox Command="{Binding SetResetCarCommand}" IsChecked="{Binding IsResetCar}" Content="推车恢复"/>
+                            <CheckBox IsChecked="{Binding IsAllZombie}" Command="{Binding WriteAllZombieCommand}" Content="僵尸全部出动"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
