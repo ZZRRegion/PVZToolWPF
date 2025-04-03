@@ -305,7 +305,7 @@ namespace PVZToolWPF
         {
             if(plantCallBuffer == nint.Zero)
             {
-                plantCallBuffer = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+                plantCallBuffer = MemoryUtil.VirtualAllocEx();
             }
             this.PlantCallAddr = $"{plantCallBuffer:x}";
             byte[] bys =
@@ -338,7 +338,7 @@ namespace PVZToolWPF
         {
             if (plantCallBuffer == nint.Zero)
             {
-                plantCallBuffer = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+                plantCallBuffer = MemoryUtil.VirtualAllocEx();
             }
             this.PlantCallAddr = $"{plantCallBuffer:x}";
             byte[] bys =
@@ -418,7 +418,7 @@ namespace PVZToolWPF
         {
             if(this.zombieCallBuf == nint.Zero)
             {
-                this.zombieCallBuf = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+                this.zombieCallBuf = MemoryUtil.VirtualAllocEx();
             }
             byte[] bys = [
                 0x60, //pushad
@@ -448,7 +448,7 @@ namespace PVZToolWPF
         {
             if (this.zombieCallBuf == nint.Zero)
             {
-                this.zombieCallBuf = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+                this.zombieCallBuf = MemoryUtil.VirtualAllocEx();
             }
             byte[] bys = [
                 0x60, //pushad
@@ -651,7 +651,7 @@ namespace PVZToolWPF
             int address = 0x46c769;
             if(randBoomBuf == nint.Zero)
             {
-                randBoomBuf = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+                randBoomBuf = MemoryUtil.VirtualAllocEx();
             }
             if(this.IsRandBoom)
             {
@@ -705,7 +705,7 @@ namespace PVZToolWPF
             {
                 if(potThreadBuf == nint.Zero)
                 {
-                    potThreadBuf = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+                    potThreadBuf = MemoryUtil.VirtualAllocEx();
                 }
                 byte[] jmpBys = [
                     0xE9, 0x07, 0x24, 0x40, 0x00, //jmp potThreadBuf
@@ -920,7 +920,7 @@ namespace PVZToolWPF
             {
                 if(randBoomBuf == nint.Zero)
                 {
-                    randPlantBuf = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+                    randPlantBuf = MemoryUtil.VirtualAllocEx();
                 }
                 byte[] bys = [0xE9, 0x6A, 0xF5, 0x62, 0x00];
                 int offset = (int)randPlantBuf - address - 5;
@@ -953,7 +953,7 @@ namespace PVZToolWPF
         {
             if(carRunBuf == nint.Zero)
             {
-                carRunBuf = Kernel32.VirtualAllocEx(hProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+                carRunBuf = MemoryUtil.VirtualAllocEx();
                 Debug.WriteLine($"{carRunBuf:x}");
             }
             byte[] bys = [
