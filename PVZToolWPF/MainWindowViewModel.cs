@@ -709,10 +709,7 @@ namespace PVZToolWPF
                     ];
                 int addr = (int)potThreadBuf - 0x44DBF4 - 5;
                 byte[] ts = BitConverter.GetBytes(addr);
-                jmpBys[1] = ts[0];
-                jmpBys[2] = ts[1];
-                jmpBys[3] = ts[2];
-                jmpBys[4] = ts[3];
+                Array.Copy(ts, 0, jmpBys, 1, 4);
                 MemoryUtil.WriteProcessMemoryBytes(jmpBys, address);
 
                 byte[] buf = [
@@ -723,10 +720,7 @@ namespace PVZToolWPF
                     ];
                 addr = 0x44DBFE - (int)potThreadBuf - buf.Length;
                 ts = BitConverter.GetBytes(addr);
-                buf[buf.Length - 4] = ts[0];
-                buf[buf.Length - 3] = ts[1];
-                buf[buf.Length - 2] = ts[2];
-                buf[buf.Length - 1] = ts[3];
+                Array.Copy(ts, 0, buf, buf.Length - 4, 4);
                 MemoryUtil.WriteProcessMemoryBytes(buf, (int)potThreadBuf);
 
             }
@@ -927,10 +921,7 @@ namespace PVZToolWPF
                 byte[] bys = [0xE9, 0x6A, 0xF5, 0x62, 0x00];
                 int offset = (int)randPlantBuf - address - 5;
                 byte[] bs = BitConverter.GetBytes(offset);
-                bys[1] = bs[0];
-                bys[2] = bs[1];
-                bys[3] = bs[2];
-                bys[4] = bs[3];
+                Array.Copy(bs, 0, bys, 1, 4);
                 MemoryUtil.WriteProcessMemoryBytes(bys, address);
 
                 bys = [
@@ -941,10 +932,7 @@ namespace PVZToolWPF
                     ];
                 offset = address + 5 - (int)randPlantBuf - bys.Length;
                 bs = BitConverter.GetBytes(offset);
-                bys[^4] = bs[0];
-                bys[^3] = bs[1];
-                bys[^2] = bs[2];
-                bys[^1] = bs[3];
+                Array.Copy(bs, 0, bys, bys.Length - 4, 4);
                 MemoryUtil.WriteProcessMemoryBytes(bys, (int)randPlantBuf);
             }
             else
@@ -978,17 +966,10 @@ namespace PVZToolWPF
             {
                 int addr = carAddr + i * 0x48;
                 byte[] bs = BitConverter.GetBytes(addr);
-                bys[2] = bs[0];
-                bys[3] = bs[1];
-                bys[4] = bs[2];
-                bys[5] = bs[3];
-
+                Array.Copy(bs, 0, bys, 2, 4);
                 address = 0x458DA0 - (int)carRunBuf - 11;
                 bs = BitConverter.GetBytes(address);
-                bys[bys.Length - 6] = bs[0];
-                bys[bys.Length - 5] = bs[1];
-                bys[bys.Length - 4] = bs[2];
-                bys[bys.Length - 3] = bs[3];
+                Array.Copy(bs, 0, bys, bys.Length - 6, 4);
                 MemoryUtil.WriteProcessMemoryBytes(bys, (int)carRunBuf);
 
                 Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, carRunBuf, nint.Zero, 0, out _);
