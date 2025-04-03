@@ -19,6 +19,7 @@ namespace PVZToolWPF
 {
     internal partial class MainWindowViewModel : ObservableObject,IPVZUpdate
     {
+        #region 私有变量
         private Kernel32.SafeHPROCESS hProcess = Kernel32.SafeHPROCESS.Null;
         private int baseAddress;
         [ObservableProperty]
@@ -37,6 +38,7 @@ namespace PVZToolWPF
 
         private uint pid;
         public event Action<Kernel32.SafeHPROCESS, int, uint>? UpdateEvent;
+        #endregion
         [RelayCommand]
         private void Reload()
         {
@@ -138,7 +140,7 @@ namespace PVZToolWPF
                 MemoryUtil.WriteProcessMemoryInt(value, (int)randPlantBuf + 1);
             }
         }
-
+        #region 自动收集阳光
         [ObservableProperty]
         private bool isAutoCollect = false;
         [ObservableProperty]
@@ -183,6 +185,7 @@ namespace PVZToolWPF
             }
             MemoryUtil.WriteProcessMemoryShort((short)value, address);
         }
+        #endregion
         #region 卡槽无冷却
         [ObservableProperty]
         private string cardNoCD1Memo = "修改内存地址:0x487296处的，0x147E为0x147D，即更改jle->jge";
@@ -315,15 +318,12 @@ namespace PVZToolWPF
                     0x61, //popad
                     0xC3 // ret
                 };
-            bys[16] = 25;// this.PlantIDCall;//植物ID
+            bys[16] = this.PlantIDCall;//植物ID
             bys[23] = this.XAxis;
             bys[18] = this.YAxis;
             int callAddress = 0x40D120 - (int)plantCallBuffer - bys.Length + 2;
             byte[] b = BitConverter.GetBytes(callAddress);
-            bys[bys.Length - 6] = b[0]; // call指令相对地址处理
-            bys[bys.Length - 5] = b[1];
-            bys[bys.Length - 4] = b[2];
-            bys[bys.Length - 3] = b[3];
+            Array.Copy(b, 0, bys, bys.Length - 6, 4);// call指令相对地址处理
             MemoryUtil.WriteProcessMemoryBytes(bys, (int)plantCallBuffer);
             Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, plantCallBuffer, nint.Zero, 0, out _);
             Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
@@ -360,10 +360,7 @@ namespace PVZToolWPF
                     bys[18] = y;
                     int callAddress = 0x40D120 - (int)plantCallBuffer - bys.Length + 2;
                     byte[] b = BitConverter.GetBytes(callAddress);
-                    bys[bys.Length - 6] = b[0]; // call指令相对地址处理
-                    bys[bys.Length - 5] = b[1];
-                    bys[bys.Length - 4] = b[2];
-                    bys[bys.Length - 3] = b[3];
+                    Array.Copy(b, 0, bys, bys.Length - 6, 4);// call指令相对地址处理
                     MemoryUtil.WriteProcessMemoryBytes(bys, (int)plantCallBuffer);
                     Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, plantCallBuffer, nint.Zero, 0, out _);
                     Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
@@ -436,11 +433,7 @@ namespace PVZToolWPF
             bys[6] = this.ZombieYAxis;
             int address = 0x42a0f0 - (int)zombieCallBuf - bys.Length + 2;
             byte[] bs = BitConverter.GetBytes(address);
-            bys[bys.Length - 6] = bs[0];
-            bys[bys.Length - 5] = bs[1];
-            bys[bys.Length - 4] = bs[2];
-            bys[bys.Length - 3] = bs[3];
-
+            Array.Copy(bs, 0, bys, bys.Length - 6, 4);
             MemoryUtil.WriteProcessMemoryBytes(bys, (int)zombieCallBuf);
             Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, zombieCallBuf, nint.Zero, 0, out _);
             Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
@@ -474,11 +467,7 @@ namespace PVZToolWPF
                     bys[6] = (byte)i;
                     int address = 0x42a0f0 - (int)zombieCallBuf - bys.Length + 2;
                     byte[] bs = BitConverter.GetBytes(address);
-                    bys[bys.Length - 6] = bs[0];
-                    bys[bys.Length - 5] = bs[1];
-                    bys[bys.Length - 4] = bs[2];
-                    bys[bys.Length - 3] = bs[3];
-
+                    Array.Copy(bs, 0, bys, bys.Length - 6, 4);
                     MemoryUtil.WriteProcessMemoryBytes(bys, (int)zombieCallBuf);
                     Kernel32.SafeHTHREAD hthread = Kernel32.CreateRemoteThread(hProcess, null, 0, zombieCallBuf, nint.Zero, 0, out _);
                     Kernel32.WaitForSingleObject(hthread, Kernel32.INFINITE);
@@ -665,10 +654,7 @@ namespace PVZToolWPF
                 byte[] bs = [0xE9, 0x92, 0x38, 0xF8, 0x01]; //jmp randBoomBuf
                 int jmpaddr = (int)randBoomBuf - 0x46c76e;
                 byte[] ts = BitConverter.GetBytes(jmpaddr);
-                bs[1] = ts[0];
-                bs[2] = ts[1];
-                bs[3] = ts[2];
-                bs[4] = ts[3];
+                Array.Copy(ts, 0, bs, 1, 4);
                 MemoryUtil.WriteProcessMemoryBytes(bs, address);
 
                 byte[] threadBuf = [
@@ -679,10 +665,7 @@ namespace PVZToolWPF
                     ];
                 jmpaddr = 0x46c76E -(int)randBoomBuf - threadBuf.Length;
                 ts = BitConverter.GetBytes(jmpaddr);
-                threadBuf[threadBuf.Length - 4] = ts[0];
-                threadBuf[threadBuf.Length - 3] = ts[1];
-                threadBuf[threadBuf.Length - 2] = ts[2];
-                threadBuf[threadBuf.Length - 1] = ts[3];
+                Array.Copy(ts, 0, threadBuf, threadBuf.Length - 4, 4);
                 MemoryUtil.WriteProcessMemoryBytes(threadBuf, (int)randBoomBuf);
             }
             else
@@ -958,10 +941,10 @@ namespace PVZToolWPF
                     ];
                 offset = address + 5 - (int)randPlantBuf - bys.Length;
                 bs = BitConverter.GetBytes(offset);
-                bys[bys.Length - 4] = bs[0];
-                bys[bys.Length - 3] = bs[1];
-                bys[bys.Length - 2] = bs[2];
-                bys[bys.Length - 1] = bs[3];
+                bys[^4] = bs[0];
+                bys[^3] = bs[1];
+                bys[^2] = bs[2];
+                bys[^1] = bs[3];
                 MemoryUtil.WriteProcessMemoryBytes(bys, (int)randPlantBuf);
             }
             else
