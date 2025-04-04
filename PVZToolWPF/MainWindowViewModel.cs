@@ -1127,8 +1127,9 @@ namespace PVZToolWPF
             int address = 0x6a9ec0;
             int curX = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x8);
             curX += offset;
-            if (curX < 0)
+            if (curX < 0 || curX >= 80 * 9)
                 return;
+
             MemoryUtil.WriteProcessMemoryInt(curX, address, 0x768, 0xAC, 0x8);
 
             int x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x28);
@@ -1144,7 +1145,7 @@ namespace PVZToolWPF
             int address = 0x6a9ec0;
             int curY = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0xC);
             curY += offset;
-            if (curY < 0)
+            if (curY < 0 || curY >= 100 * 5)
                 return;
             MemoryUtil.WriteProcessMemoryInt(curY, address, 0x768, 0xAC, 0xC);
 
