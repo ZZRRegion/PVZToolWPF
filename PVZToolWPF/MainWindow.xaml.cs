@@ -1,4 +1,5 @@
 ﻿global using Vanara.PInvoke;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -66,10 +67,8 @@ namespace PVZToolWPF
             this.viewModel.SunValue = MemoryUtil.ReadProcessMemoryInt(this.baseAddress + 0x2A9EC0, 0x768, 0x5560);
             
         }
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace PVZToolWPF
     internal partial class MainWindowViewModel : ObservableObject, IPVZUpdate
     {
         #region 私有变量
+        private GlobalKeyboardListener globalKeyboard = new();
         private Kernel32.SafeHPROCESS hProcess = Kernel32.SafeHPROCESS.Null;
         private int baseAddress;
         [ObservableProperty]
@@ -123,7 +125,11 @@ namespace PVZToolWPF
             };
             dispatcherTimer.Tick += DispatcherTimer_Tick;
             dispatcherTimer.Start();
+            globalKeyboard.KeyEvent += GlobalKeyboard_KeyEvent;
+            globalKeyboard.Start();
         }
+
+        
 
         private void DispatcherTimer_Tick(object? sender, EventArgs e)
         {
@@ -1113,6 +1119,60 @@ namespace PVZToolWPF
                 bys = [0x90, 0x90];
             }
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
+        #region 移动植物
+        private void MoveX(int offset)
+        {
+            int address = 0x6a9ec0;
+            int curX = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x8);
+            curX += offset;
+            if (curX < 0)
+                return;
+            MemoryUtil.WriteProcessMemoryInt(curX, address, 0x768, 0xAC, 0x8);
+
+            int x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x28);
+            if (offset > 0)
+                x += 1;
+            else
+                x -= 1;
+            MemoryUtil.WriteProcessMemoryInt(x, address, 0x768, 0xAC, 0x28);
+            Debug.WriteLine($"X轴移动：{offset}，当前:{curX},{x}");
+        }
+        private void MoveY(int offset)
+        {
+            int address = 0x6a9ec0;
+            int curY = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0xC);
+            curY += offset;
+            if (curY < 0)
+                return;
+            MemoryUtil.WriteProcessMemoryInt(curY, address, 0x768, 0xAC, 0xC);
+
+            int y = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x1C);
+            if (offset > 0)
+                y += 1;
+            else
+                y -= 1;
+            MemoryUtil.WriteProcessMemoryInt(y, address, 0x768, 0xAC, 0x1C);
+            Debug.WriteLine($"Y轴移动：{offset}，当前:{curY},{y}");
+        }
+        private void GlobalKeyboard_KeyEvent(int vkCode)
+        {
+            switch (vkCode)
+            {
+                case 0x25://left
+                    MoveX(-80);
+                    break;
+                case 0x26://up
+                    MoveY(-100);
+                    break;
+                case 0x27://right
+                    MoveX(80);
+                    break;
+                case 0x28://down
+                    MoveY(100);
+                    break;
+            }
         }
         #endregion
     }
