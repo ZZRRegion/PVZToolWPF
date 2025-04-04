@@ -1176,5 +1176,20 @@ namespace PVZToolWPF
             }
         }
         #endregion
+        #region 植物无冷却
+        [ObservableProperty]
+        private bool isChomperNOCD = false;
+        [RelayCommand]
+        private void WriteChomperNOCD()
+        {
+            int address = 0x461551;
+            int value = 4000;
+            if(this.IsChomperNOCD)
+            {
+                value = 0;
+            }
+            MemoryUtil.WriteProcessMemoryInt(value, address);
+        }
+        #endregion
     }
 }

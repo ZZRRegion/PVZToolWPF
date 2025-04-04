@@ -109,6 +109,9 @@
                             <CheckBox IsChecked="{Binding IsClearGravestone}" Command="{Binding WriteClearGravestoneCommand}" Content="清除墓碑"/>
                             <CheckBox IsChecked="{Binding IsClearAllPlant}" Command="{Binding WriteClearAllPlantCommand}" Content="清除所有植物"/>
                         </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsChomperNOCD}" Command="{Binding WriteChomperNOCDCommand}" Content="大嘴花无冷却"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
 
