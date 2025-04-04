@@ -1226,5 +1226,27 @@ namespace PVZToolWPF
             MemoryUtil.WriteProcessMemoryInt(value, address);
         }
         #endregion
+        #region 脆皮僵尸
+        [ObservableProperty]
+        private bool isCrispyZombie = false;
+        [RelayCommand]
+        private void WriteCrispyZombie()
+        {
+            int address = 0x53178A;
+            byte[] bys = [0x7F, 0x10];
+            if(this.IsCrispyZombie)
+            {
+                bys = [0x90, 0x90];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            address = 0x531066;
+            bys = [0x75, 0x11];
+            if(this.IsCrispyZombie)
+            {
+                bys = [0x90, 0x90];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
     }
 }
