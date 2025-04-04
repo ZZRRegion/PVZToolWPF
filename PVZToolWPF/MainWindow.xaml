@@ -116,6 +116,9 @@
                             <CheckBox IsChecked="{Binding IsCrispyZombie}" Command="{Binding WriteCrispyZombieCommand}" Content="脆皮僵尸"/>
                             <CheckBox IsChecked="{Binding IsIceTunnel}" Command="{Binding WriteIceTunnelCommand}" Content="冰道屏蔽"/>
                         </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsSmogNone}" Command="{Binding WriteSmogNoneCommand}" Content="浓雾透视"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
 

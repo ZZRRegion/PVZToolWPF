@@ -438,7 +438,7 @@ namespace PVZToolWPF
                 0xC3   //ret
                 ];
             bys[2] = this.ZombieXAxis;
-            bys[4] = 12;// this.ZombieNum;
+            bys[4] = this.ZombieNum;
             bys[6] = this.ZombieYAxis;
             int address = 0x42a0f0 - (int)zombieCallBuf - bys.Length + 2;
             byte[] bs = BitConverter.GetBytes(address);
@@ -1260,6 +1260,24 @@ namespace PVZToolWPF
             {
                 value = 0;
             }
+            MemoryUtil.WriteProcessMemoryInt(value, address);
+        }
+        #endregion
+        #region 浓雾透视
+        [ObservableProperty]
+        private bool isSmogNone = false;
+        [RelayCommand]
+        private void WriteSmogNone()
+        {
+            int address = 0x41A67A;
+            int value = 255;
+            if (this.IsSmogNone)
+                value = 0;
+            MemoryUtil.WriteProcessMemoryInt(value, address);
+            address = 0x41A681;
+            value = 200;
+            if (this.IsSmogNone)
+                value = 0;
             MemoryUtil.WriteProcessMemoryInt(value, address);
         }
         #endregion
