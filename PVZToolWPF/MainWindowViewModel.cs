@@ -1190,6 +1190,20 @@ namespace PVZToolWPF
             }
             MemoryUtil.WriteProcessMemoryInt(value, address);
         }
+
+        [ObservableProperty]
+        private bool isPotatoThunderNOCD = false;
+        [RelayCommand]
+        private void WritePotatoThunder()
+        {
+            int address = 0x45E34E;
+            int value = 1500;
+            if(this.IsPotatoThunderNOCD)
+            {
+                value = 0;
+            }
+            MemoryUtil.WriteProcessMemoryInt(value, address);
+        }
         #endregion
     }
 }
