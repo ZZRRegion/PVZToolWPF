@@ -245,6 +245,11 @@ namespace PVZToolWPF.Util
             nint buf = Kernel32.VirtualAllocEx(HProcess, nint.Zero, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
             return buf;
         }
+        public static nint VirtualAllocEx(nint lpAddress)
+        {
+            nint buf = Kernel32.VirtualAllocEx(HProcess, lpAddress, 1024, Kernel32.MEM_ALLOCATION_TYPE.MEM_COMMIT, Kernel32.MEM_PROTECTION.PAGE_EXECUTE_READWRITE);
+            return buf;
+        }
         /// <summary>
         /// 创建远程线程运行
         /// </summary>

@@ -1281,5 +1281,46 @@ namespace PVZToolWPF
             MemoryUtil.WriteProcessMemoryInt(value, address);
         }
         #endregion
+        #region 坚果突变
+        [ObservableProperty]
+        private bool isNutMutation = false;
+        private nint nutMutationBuf = nint.Zero;
+        [RelayCommand]
+        private void WriteNutMutation()
+        {
+            if (this.nutMutationBuf == nint.Zero)
+            {
+                this.nutMutationBuf = MemoryUtil.VirtualAllocEx();
+            }
+            int address = 0x464523;
+            byte[] bys = {
+                        0x8B, 0x77, 0x40, 0x8D, 0x0C, 0x40
+                        };
+            if(this.IsNutMutation)
+            {
+                bys = [
+                    0xE9, 0xD8, 0xBA, 0x34, 0x00,//jmp buf 
+                    0x90
+                      ];
+                int addr = (int)nutMutationBuf - 0x464523 - 5;
+                Array.Copy(BitConverter.GetBytes(addr), 0, bys, 1, 4);
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            if(this.IsNutMutation)
+            {
+                bys = [
+                    0x8B, 0x77, 0x40, 
+                    0x8D, 0x0C, 0x40, 
+                    0x81, 0x7F, 0x40, 0xF4, 0x01, 0x00, 0x00, 
+                    0x0F, 0x8D, 0x07, 0x00, 0x00, 0x00, 
+                    0xC7, 0x47, 0x24, 0x11, 0x00, 0x00, 0x00,
+                    0xE9, 0x0A, 0x45, 0xCB, 0xFF //jmp old
+                    ];
+                int addr = 0x464529 - (int)nutMutationBuf - bys.Length;
+                Array.Copy(BitConverter.GetBytes(addr), 0, bys, bys.Length - 4, 4);
+                MemoryUtil.WriteProcessMemoryBytes(bys, nutMutationBuf);
+            }
+        }
+        #endregion
     }
 }
