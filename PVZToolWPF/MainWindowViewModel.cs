@@ -19,7 +19,7 @@ using static Vanara.PInvoke.Gdi32;
 
 namespace PVZToolWPF
 {
-    internal partial class MainWindowViewModel : ObservableObject,IPVZUpdate
+    internal partial class MainWindowViewModel : ObservableObject, IPVZUpdate
     {
         #region 私有变量
         private Kernel32.SafeHPROCESS hProcess = Kernel32.SafeHPROCESS.Null;
@@ -55,7 +55,7 @@ namespace PVZToolWPF
                     MemoryUtil.HProcess = hProcess;
                     HINSTANCE[] hinstances = Kernel32.EnumProcessModules(hProcess);
                     this.baseAddress = hinstances[0].DangerousGetHandle().ToInt32();
-                    this.UpdateEvent?.Invoke(hProcess, baseAddress,pid);
+                    this.UpdateEvent?.Invoke(hProcess, baseAddress, pid);
                     this.Update(hProcess, baseAddress);
                 }
             }
@@ -91,18 +91,19 @@ namespace PVZToolWPF
             ReadZombieColor();
             ReadResetCar();
             ReadAllZombie();
+            ReadClearGravestone();
         }
         public MainWindowViewModel()
         {
-            for(int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++)
             {
-                this.cardNums.Add($"卡槽{i+1}");
+                this.cardNums.Add($"卡槽{i + 1}");
             }
-            for(byte i = 0; i < 9; i++)
+            for (byte i = 0; i < 9; i++)
             {
                 this.xAxiss.Add(i);
             }
-            for(byte i = 0; i < 5; i++)
+            for (byte i = 0; i < 5; i++)
             {
                 this.yAxiss.Add(i);
             }
@@ -125,20 +126,20 @@ namespace PVZToolWPF
 
         private void DispatcherTimer_Tick(object? sender, EventArgs e)
         {
-            if(!this.hProcess.IsInvalid && this.IsRandBoom)
+            if (!this.hProcess.IsInvalid && this.IsRandBoom)
             {
                 int address = 0x6bbf20; //这是子弹的赋值地址
                 int value = Random.Shared.Next(0, 13);
                 MemoryUtil.WriteProcessMemoryInt(value, address);
             }
-            if(!this.hProcess.IsInvalid && this.IsRandPlant)
+            if (!this.hProcess.IsInvalid && this.IsRandPlant)
             {
                 int address = 0x6a9ec0;
                 int value = Random.Shared.Next(0, 50);
                 MemoryUtil.WriteProcessMemoryInt(value, address, 0x768, 0x138, 0x28);
             }
-            if(!this.hProcess.IsInvalid 
-                &&this.randPlantBuf != nint.Zero 
+            if (!this.hProcess.IsInvalid
+                && this.randPlantBuf != nint.Zero
                 && this.IsRandPlant2)
             {
                 int value = Random.Shared.Next(0, 50);
@@ -154,7 +155,7 @@ namespace PVZToolWPF
         {
             int address = 0x0043158F;
             short value = MemoryUtil.ReadProcessMemoryShort(address);
-            if(value == 0x0874)
+            if (value == 0x0874)
             {
                 this.IsAutoCollect = true;
             }
@@ -163,7 +164,7 @@ namespace PVZToolWPF
         {
             int address = 0x00430AD0;
             short value = MemoryUtil.ReadProcessMemoryShort(address);
-            if((ushort)value != 0x3E75)
+            if ((ushort)value != 0x3E75)
             {
                 this.IsAutoCollect2 = true;
             }
@@ -173,7 +174,7 @@ namespace PVZToolWPF
         {
             int address = 0x0043158F;
             short value = 0x0875;//原指令
-            if(this.IsAutoCollect)
+            if (this.IsAutoCollect)
             {
                 value = 0x0874;//je
             }
@@ -184,7 +185,7 @@ namespace PVZToolWPF
         {
             int address = 0x00430AD0;
             ushort value = 0x3E75;
-            if(this.IsAutoCollect2)
+            if (this.IsAutoCollect2)
             {
                 value = 0x9090;
             }
@@ -198,7 +199,7 @@ namespace PVZToolWPF
         {
             int address = this.baseAddress + 0x87296;
             short value = MemoryUtil.ReadProcessMemoryShort(address);
-            if(value == 0x147D)
+            if (value == 0x147D)
             {
                 this.IsCardNoCD1 = true;
             }
@@ -221,7 +222,7 @@ namespace PVZToolWPF
         {
             int address = this.baseAddress + 0x88E73;
             int value = MemoryUtil.ReadProcessMemoryInt(address);
-            if(value == 0x014845C6)
+            if (value == 0x014845C6)
             {
                 this.IsCardNoCD2 = true;
             }
@@ -246,7 +247,7 @@ namespace PVZToolWPF
             int address = 0x464A96;
             byte[] oldbys = [0x0F, 0x85, 0x98, 0xFE, 0xFF, 0xFF];
             byte[] bys = MemoryUtil.ReadProcessMemoryBytes(address, 6);
-            for(int i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++)
             {
                 if (bys[i] != oldbys[i])
                 {
@@ -260,9 +261,9 @@ namespace PVZToolWPF
         {
             int address = 0x464A96;
             byte[] bys = [0x0F, 0x85, 0x98, 0xFE, 0xFF, 0xFF];
-            if(this.IsBulletStacking)
+            if (this.IsBulletStacking)
             {
-                for(int i = 0; i < 6; i++)
+                for (int i = 0; i < 6; i++)
                 {
                     bys[i] = 0x90;
                 }
@@ -304,7 +305,7 @@ namespace PVZToolWPF
         [RelayCommand]
         private void PlantCall()
         {
-            if(plantCallBuffer == nint.Zero)
+            if (plantCallBuffer == nint.Zero)
             {
                 plantCallBuffer = MemoryUtil.VirtualAllocEx();
             }
@@ -354,9 +355,9 @@ namespace PVZToolWPF
                     0x61, //popad
                     0xC3 // ret
                 ];
-            for(byte x = 0; x < 9; x++)
+            for (byte x = 0; x < 9; x++)
             {
-                for(byte y = 0; y < 5; y++)
+                for (byte y = 0; y < 5; y++)
                 {
                     bys[16] = this.PlantIDCall;//植物ID
                     bys[23] = x;
@@ -368,7 +369,7 @@ namespace PVZToolWPF
                     MemoryUtil.CreateRemoteThread(plantCallBuffer);
                 }
             }
-           
+
         }
         #endregion
         #region 植物重叠
@@ -379,7 +380,7 @@ namespace PVZToolWPF
             byte[] bys = [0x0F, 0x84, 0x1F, 0x09, 0x00, 0x00];
             int address = 0x40FE2F;
             byte[] rs = MemoryUtil.ReadProcessMemoryBytes(address, 6);
-            for(int i = 0; i < bys.Length; i++)
+            for (int i = 0; i < bys.Length; i++)
             {
                 if (bys[i] != rs[i])
                 {
@@ -393,7 +394,7 @@ namespace PVZToolWPF
         {
             byte[] bys = [0x0F, 0x84, 0x1F, 0x09, 0x00, 0x00];
             int address = 0x40FE2F;
-            if(this.AllowPlantOverlap)
+            if (this.AllowPlantOverlap)
             {
                 bys = [0xE9, 0x20, 0x09, 0x00, 0x00, 0x90];
             }
@@ -413,7 +414,7 @@ namespace PVZToolWPF
         [RelayCommand]
         private void ZombieCall()
         {
-            if(this.zombieCallBuf == nint.Zero)
+            if (this.zombieCallBuf == nint.Zero)
             {
                 this.zombieCallBuf = MemoryUtil.VirtualAllocEx();
             }
@@ -483,7 +484,7 @@ namespace PVZToolWPF
         {
             int address = 0x6a9ec0;
             int flag = MemoryUtil.ReadProcessMemoryInt(address, 0x814);
-            if(flag == 1)
+            if (flag == 1)
             {
                 this.IsCheat = true;
             }
@@ -492,7 +493,7 @@ namespace PVZToolWPF
         private void WriteCheat()
         {
             int value = 0;
-            if(this.IsCheat)
+            if (this.IsCheat)
             {
                 value = 1;
             }
@@ -508,7 +509,7 @@ namespace PVZToolWPF
         {
             int address = 0x41d7d0;
             byte value = MemoryUtil.ReadProcessMemoryByte(address);
-            if(value != 0x51)
+            if (value != 0x51)
             {
                 this.IsPurpleCardUnlimited = true;
             }
@@ -518,7 +519,7 @@ namespace PVZToolWPF
         {
             int address = 0x41d7d0;
             byte value = 0x51;
-            if(this.IsPurpleCardUnlimited)
+            if (this.IsPurpleCardUnlimited)
             {
                 value = 0xC3;
             }
@@ -534,7 +535,7 @@ namespace PVZToolWPF
         {
             int address = 0x40E477;
             short value = MemoryUtil.ReadProcessMemoryShort(address);
-            if(value != 0x4674)
+            if (value != 0x4674)
             {
                 this.IsPlantPurpleCard = true;
             }
@@ -544,7 +545,7 @@ namespace PVZToolWPF
         {
             int address = 0x40E477;
             short value = 0x4674;
-            if(this.IsPlantPurpleCard)
+            if (this.IsPlantPurpleCard)
             {
                 value = 0x46EB;
             }
@@ -556,9 +557,9 @@ namespace PVZToolWPF
         private void Seckill()
         {
             int address = 0x722000;
-            for(int i = 0; i < 500; i++)
+            for (int i = 0; i < 500; i++)
             {
-                MemoryUtil.WriteProcessMemoryInt(3, address, i*348 + 0x28);
+                MemoryUtil.WriteProcessMemoryInt(3, address, i * 348 + 0x28);
                 MemoryUtil.WriteProcessMemoryInt(3, address, -i * 348 + 0x28);
             }
         }
@@ -596,7 +597,7 @@ namespace PVZToolWPF
             int address = 0x546310;
             byte[] bys = [0x8B, 0x81, 0x2C, 0x03, 0x00, 0x00];
             byte[] bs = MemoryUtil.ReadProcessMemoryBytes(address, 6);
-            for(int i = 0; i < bys.Length; i++)
+            for (int i = 0; i < bys.Length; i++)
             {
                 if (bys[i] != bs[i])
                 {
@@ -609,7 +610,7 @@ namespace PVZToolWPF
         private void WriteBackgroundRun()
         {
             byte[] bys = [0x8B, 0x81, 0x2C, 0x03, 0x00, 0x00];
-            if(this.IsBackgroundRun)
+            if (this.IsBackgroundRun)
             {
                 bys = [0x90, 0x90, 0x90, 0x90, 0x90, 0x90];
             }
@@ -626,7 +627,7 @@ namespace PVZToolWPF
             byte[] bys = [0x89, 0x45, 0x5C, 0x8B, 0xC6];
             int address = 0x46c769;
             byte[] bs = MemoryUtil.ReadProcessMemoryBytes(address, 5);
-            for(int i = 0; i < bys.Length; i++)
+            for (int i = 0; i < bys.Length; i++)
             {
                 if (bys[i] != bs[i])
                 {
@@ -642,11 +643,11 @@ namespace PVZToolWPF
         {
             byte[] bys = [0x89, 0x45, 0x5C, 0x8B, 0xC6];//原指令
             int address = 0x46c769;
-            if(randBoomBuf == nint.Zero)
+            if (randBoomBuf == nint.Zero)
             {
                 randBoomBuf = MemoryUtil.VirtualAllocEx();
             }
-            if(this.IsRandBoom)
+            if (this.IsRandBoom)
             {
                 byte[] bs = [0xE9, 0x92, 0x38, 0xF8, 0x01]; //jmp randBoomBuf
                 int jmpaddr = (int)randBoomBuf - 0x46c76e;
@@ -660,7 +661,7 @@ namespace PVZToolWPF
                     0x8B, 0xC6, //mov eax,esi
                     0xE9, 0x5E, 0xC7, 0x07, 0xFE //jmp 46c76e
                     ];
-                jmpaddr = 0x46c76E -(int)randBoomBuf - threadBuf.Length;
+                jmpaddr = 0x46c76E - (int)randBoomBuf - threadBuf.Length;
                 ts = BitConverter.GetBytes(jmpaddr);
                 Array.Copy(ts, 0, threadBuf, threadBuf.Length - 4, 4);
                 MemoryUtil.WriteProcessMemoryBytes(threadBuf, (int)randBoomBuf);
@@ -679,7 +680,7 @@ namespace PVZToolWPF
             int address = 0x44DBF4;
             byte[] bys = [0x83, 0x7D, 0x4C, 0x00, 0x0F, 0x8E, 0x18, 0x03, 0x00, 0x00];
             byte[] bs = MemoryUtil.ReadProcessMemoryBytes(address, bys.Length);
-            for(int i = 0; i < bys.Length; i++)
+            for (int i = 0; i < bys.Length; i++)
             {
                 if (bys[i] != bs[i])
                 {
@@ -694,9 +695,9 @@ namespace PVZToolWPF
         {
             int address = 0x44DBF4;
             byte[] bys = [0x83, 0x7D, 0x4C, 0x00, 0x0F, 0x8E, 0x18, 0x03, 0x00, 0x00];
-            if(this.IsPot)
+            if (this.IsPot)
             {
-                if(potThreadBuf == nint.Zero)
+                if (potThreadBuf == nint.Zero)
                 {
                     potThreadBuf = MemoryUtil.VirtualAllocEx();
                 }
@@ -735,7 +736,7 @@ namespace PVZToolWPF
             int address = 0x422D17;
             byte[] bys = [0x83, 0x43, 0x5C, 0xFF];
             byte[] bs = MemoryUtil.ReadProcessMemoryBytes(address, bys.Length);
-            for(int i = 0; i < bys.Length; i++)
+            for (int i = 0; i < bys.Length; i++)
             {
                 if (bys[i] != bs[i])
                 {
@@ -749,14 +750,14 @@ namespace PVZToolWPF
         {
             int address = 0x422D17;
             byte[] bys = [0x83, 0x43, 0x5C, 0xFF];
-            if(this.IsConveyorDelay)
+            if (this.IsConveyorDelay)
             {
                 bys = [0x83, 0x43, 0x5C, 0x80];
             }
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
             address = 0x489CA1;
             bys = [0x85, 0xC0];
-            if(this.IsConveyorDelay)
+            if (this.IsConveyorDelay)
             {
                 bys = [0x31, 0xC0];
             }
@@ -771,7 +772,7 @@ namespace PVZToolWPF
             int address = 0x410AE6;
             byte[] bys = [0x0F, 0x85, 0xE5, 0x00, 0x00, 0x00];
             byte[] bs = MemoryUtil.ReadProcessMemoryBytes(address, bys.Length);
-            for(int i = 0; i < bys.Length; i++)
+            for (int i = 0; i < bys.Length; i++)
             {
                 if (bys[i] != bs[i])
                 {
@@ -785,7 +786,7 @@ namespace PVZToolWPF
         {
             int address = 0x410AE6;
             byte[] bys = [0x0F, 0x85, 0xE5, 0x00, 0x00, 0x00];
-            if(this.IsVerticalPlant)
+            if (this.IsVerticalPlant)
             {
                 bys = [0x90, 0x90, 0x90, 0x90, 0x90, 0x90];
             }
@@ -821,22 +822,22 @@ namespace PVZToolWPF
             int address = 0x4636E4;
             byte[] bys = MemoryUtil.ReadProcessMemoryBytes(address, 2);
             byte[] bs = [0x75, 0x0E];
-            for(int i = 0; i < bys.Length; i++)
+            for (int i = 0; i < bys.Length; i++)
             {
-                if(bys[i] != bs[i])
+                if (bys[i] != bs[i])
                 {
                     this.IsChangedPlantColor = true;
                     break;
                 }
             }
-            
+
         }
         [RelayCommand]
         private void WriteChangedPlantColor()
         {
             byte[] bs = [0x75, 0x0E];
             int address = 0x4636E4;
-            if(this.IsChangedPlantColor)
+            if (this.IsChangedPlantColor)
             {
                 bs = [0x90, 0x90];
             }
@@ -864,7 +865,7 @@ namespace PVZToolWPF
             this.ColorR = r;
             this.ColorB = b;
             this.ColorG = g;
-            if(this.ColorR != this.oldColorR
+            if (this.ColorR != this.oldColorR
                 || this.ColorG != this.oldColorG
                 || this.ColorB != this.oldColorB)
             {
@@ -879,7 +880,7 @@ namespace PVZToolWPF
             int r = this.oldColorR;
             int g = this.oldColorG;
             int b = this.oldColorB;
-            if(this.IsSetZombieColor)
+            if (this.IsSetZombieColor)
             {
                 bys = [0x90, 0x90];
                 r = this.ColorR;
@@ -892,7 +893,7 @@ namespace PVZToolWPF
                 this.ColorG = g;
                 this.ColorB = b;
             }
-                MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
             address = 0x722820;
             MemoryUtil.WriteProcessMemoryInt(r, address);
             MemoryUtil.WriteProcessMemoryInt(g, address + 4);
@@ -909,9 +910,9 @@ namespace PVZToolWPF
         partial void OnIsRandPlant2Changing(bool oldValue, bool newValue)
         {
             int address = 0x410A91;
-            if(newValue)
+            if (newValue)
             {
-                if(randBoomBuf == nint.Zero)
+                if (randBoomBuf == nint.Zero)
                 {
                     randPlantBuf = MemoryUtil.VirtualAllocEx();
                 }
@@ -922,9 +923,9 @@ namespace PVZToolWPF
                 MemoryUtil.WriteProcessMemoryBytes(bys, address);
 
                 bys = [
-                    0xB8, 0x02, 0x00, 0x00, 0x00, 
-                    0x52, 
-                    0x50, 
+                    0xB8, 0x02, 0x00, 0x00, 0x00,
+                    0x52,
+                    0x50,
                     0xE9, 0x8A, 0x0A, 0x9D, 0xFF
                     ];
                 offset = address + 5 - (int)randPlantBuf - bys.Length;
@@ -944,7 +945,7 @@ namespace PVZToolWPF
         [RelayCommand]
         private void WriteCarRun()
         {
-            if(carRunBuf == nint.Zero)
+            if (carRunBuf == nint.Zero)
             {
                 carRunBuf = MemoryUtil.VirtualAllocEx();
                 Debug.WriteLine($"{carRunBuf:x}");
@@ -987,7 +988,7 @@ namespace PVZToolWPF
         {
             int address = 0x458D1F;
             byte by = 0x01;
-            if(this.IsResetCar)
+            if (this.IsResetCar)
             {
                 by = 0x00;
                 int addr = 0x00679BF8;
@@ -999,7 +1000,7 @@ namespace PVZToolWPF
         [RelayCommand]
         private void WriteResetCar()
         {
-            if(resetCarBuf == nint.Zero)
+            if (resetCarBuf == nint.Zero)
             {
                 resetCarBuf = MemoryUtil.VirtualAllocEx();
             }
@@ -1046,7 +1047,7 @@ namespace PVZToolWPF
             byte[] bys = [0x83, 0x87, 0x9C, 0x55, 0x00, 0x00, 0xFF];
             if (this.IsAllZombie)
             {
-                if(allZombieBuf == nint.Zero)
+                if (allZombieBuf == nint.Zero)
                 {
                     allZombieBuf = MemoryUtil.VirtualAllocEx();
                 }
@@ -1069,6 +1070,27 @@ namespace PVZToolWPF
             {
                 MemoryUtil.WriteProcessMemoryBytes(bys, address);
             }
+        }
+        #endregion
+        #region 清除墓碑
+        [ObservableProperty]
+        private bool isClearGravestone = false;
+        private void ReadClearGravestone()
+        {
+            int address = 0x41BE28;
+            byte[] bys = MemoryUtil.ReadProcessMemoryBytes(address, 2);
+            this.IsClearGravestone = bys[0] != 0x74 || bys[1] != 0x96;
+        }
+        [RelayCommand]
+        private void WriteClearGravestone()
+        {
+            int address = 0x41BE28;
+            byte[] bys = [0x74, 0x96];
+            if(this.IsClearGravestone)
+            {
+                bys = [0x90, 0x90];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion
     }

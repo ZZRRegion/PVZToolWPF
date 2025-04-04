@@ -106,6 +106,7 @@
                             <Button IsEnabled="{Binding IsResetCar}" Command="{Binding WriteResetCarCommand}" Content="恢复小推车"/>
                             <CheckBox Command="{Binding SetResetCarCommand}" IsChecked="{Binding IsResetCar}" Content="推车恢复"/>
                             <CheckBox IsChecked="{Binding IsAllZombie}" Command="{Binding WriteAllZombieCommand}" Content="僵尸全部出动"/>
+                            <CheckBox IsChecked="{Binding IsClearGravestone}" Command="{Binding WriteClearGravestoneCommand}" Content="清除墓碑"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
