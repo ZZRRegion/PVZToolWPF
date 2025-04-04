@@ -92,6 +92,7 @@ namespace PVZToolWPF
             ReadResetCar();
             ReadAllZombie();
             ReadClearGravestone();
+            ReadClearAllPlant();
         }
         public MainWindowViewModel()
         {
@@ -1087,6 +1088,27 @@ namespace PVZToolWPF
             int address = 0x41BE28;
             byte[] bys = [0x74, 0x96];
             if(this.IsClearGravestone)
+            {
+                bys = [0x90, 0x90];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
+        #region 清除所有植物
+        [ObservableProperty]
+        private bool isClearAllPlant = false;
+        private void ReadClearAllPlant()
+        {
+            int address = 0x41BB2E;
+            byte[] bys = MemoryUtil.ReadProcessMemoryBytes(address, 2);
+            this.IsClearAllPlant = bys[0] != 0x74 || bys[1] != 0xB0;
+        }
+        [RelayCommand]
+        private void WriteClearAllPlant()
+        {
+            int address = 0x41BB2E;
+            byte[] bys = [0x74, 0xB0];
+            if(this.IsClearAllPlant)
             {
                 bys = [0x90, 0x90];
             }
