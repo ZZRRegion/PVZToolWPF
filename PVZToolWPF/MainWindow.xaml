@@ -114,6 +114,7 @@
                             <CheckBox IsChecked="{Binding IsPotatoThunderNOCD}" Command="{Binding WritePotatoThunderCommand}" Content="土豆雷无冷却"/>
                             <CheckBox IsChecked="{Binding IsCobCannonNOCD}" Command="{Binding WriteCobCannonCommand}" Content="玉米加农炮无冷却"/>
                             <CheckBox IsChecked="{Binding IsCrispyZombie}" Command="{Binding WriteCrispyZombieCommand}" Content="脆皮僵尸"/>
+                            <CheckBox IsChecked="{Binding IsIceTunnel}" Command="{Binding WriteIceTunnelCommand}" Content="冰道屏蔽"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>

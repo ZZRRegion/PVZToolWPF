@@ -438,7 +438,7 @@ namespace PVZToolWPF
                 0xC3   //ret
                 ];
             bys[2] = this.ZombieXAxis;
-            bys[4] = this.ZombieNum;
+            bys[4] = 12;// this.ZombieNum;
             bys[6] = this.ZombieYAxis;
             int address = 0x42a0f0 - (int)zombieCallBuf - bys.Length + 2;
             byte[] bs = BitConverter.GetBytes(address);
@@ -1246,6 +1246,21 @@ namespace PVZToolWPF
                 bys = [0x90, 0x90];
             }
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
+        #region 冰道屏蔽
+        [ObservableProperty]
+        private bool isIceTunnel = false;
+        [RelayCommand]
+        private void WriteIceTunnel()
+        {
+            int address = 0x52A8B6;
+            int value = 3000;
+            if(this.IsIceTunnel)
+            {
+                value = 0;
+            }
+            MemoryUtil.WriteProcessMemoryInt(value, address);
         }
         #endregion
     }
