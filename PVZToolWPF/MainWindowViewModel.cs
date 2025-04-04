@@ -1204,6 +1204,27 @@ namespace PVZToolWPF
             }
             MemoryUtil.WriteProcessMemoryInt(value, address);
         }
+
+        [ObservableProperty]
+        private bool isCobCannonNOCD = false;
+        [RelayCommand]
+        private void WriteCobCannon()
+        {
+            int address = 0x45E560;
+            int value = 500;
+            if(this.IsCobCannonNOCD)
+            {
+                value = 0;
+            }
+            MemoryUtil.WriteProcessMemoryInt(value, address);
+            address = 0x464D4D;
+            value = 3000;
+            if(this.IsCobCannonNOCD)
+            {
+                value = 0;
+            }
+            MemoryUtil.WriteProcessMemoryInt(value, address);
+        }
         #endregion
     }
 }

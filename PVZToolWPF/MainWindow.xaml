@@ -112,6 +112,7 @@
                         <StackPanel Orientation="Horizontal">
                             <CheckBox IsChecked="{Binding IsChomperNOCD}" Command="{Binding WriteChomperNOCDCommand}" Content="大嘴花无冷却"/>
                             <CheckBox IsChecked="{Binding IsPotatoThunderNOCD}" Command="{Binding WritePotatoThunderCommand}" Content="土豆雷无冷却"/>
+                            <CheckBox IsChecked="{Binding IsCobCannonNOCD}" Command="{Binding WriteCobCannonCommand}" Content="玉米加农炮无冷却"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
