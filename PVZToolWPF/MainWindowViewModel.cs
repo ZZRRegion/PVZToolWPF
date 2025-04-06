@@ -1322,5 +1322,20 @@ namespace PVZToolWPF
             }
         }
         #endregion
+        #region 无限刷怪
+        [ObservableProperty]
+        private bool isUnlimited = false;
+        [RelayCommand]
+        private void WriteUnlimited()
+        {
+            int address = 0x4130B4;
+            byte[] bys = [0x83, 0xC6, 0x01];
+            if(this.IsUnlimited)
+            {
+                bys = [0x83, 0xC6, 0x00];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
     }
 }
