@@ -123,6 +123,7 @@
                             <CheckBox IsChecked="{Binding IsNoWakeUp}" Command="{Binding WriteNoWakeUpCommand}" Content="蘑菇免唤醒"/>
                             <CheckBox IsChecked="{Binding IsFullScreenChomper}" Command="{Binding WriteFullScreenChomperCommand}" Content="全屏大嘴花"/>
                             <CheckBox IsChecked="{Binding IsFullBomb}" Command="{Binding WriteFullBombCommand}" Content="全屏炸弹"/>
+                            <CheckBox IsChecked="{Binding IsFullChili}" Command="{Binding WriteFullChiliCommand}" Content="全屏火爆辣椒"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>

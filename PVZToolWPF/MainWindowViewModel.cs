@@ -1389,5 +1389,20 @@ namespace PVZToolWPF
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion
+        #region 全屏辣椒
+        [ObservableProperty]
+        private bool isFullChili = false;
+        [RelayCommand]
+        private void WriteFullChili()
+        {
+            int address = 0x4664F2;
+            byte[] bys = [0x75, 0x39];
+            if(this.IsFullChili)
+            {
+                bys = [0x90, 0x90];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
     }
 }
