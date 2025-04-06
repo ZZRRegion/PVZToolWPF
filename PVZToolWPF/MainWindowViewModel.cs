@@ -1352,5 +1352,27 @@ namespace PVZToolWPF
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion
+        #region 全屏大嘴花
+        [ObservableProperty]
+        private bool isFullScreenChomper = false;
+        [RelayCommand]
+        private void WriteFullScreenChomper()
+        {
+            int address = 0x004676C2;
+            byte[] bys = [0x0F, 0x85, 0xBC, 0x01, 0x00, 0x00];
+            if(this.IsFullScreenChomper)
+            {
+                bys = [0x90, 0x90, 0x90, 0x90, 0x90, 0x90];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            address = 0x004677DA;
+            bys = [0x0F, 0x8C, 0xA1, 0x00, 0x00, 0x00];
+            if(this.IsFullScreenChomper)
+            {
+                bys = [0x90, 0x90, 0x90, 0x90, 0x90, 0x90];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
     }
 }
