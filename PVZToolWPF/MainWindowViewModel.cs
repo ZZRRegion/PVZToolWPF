@@ -1433,5 +1433,27 @@ namespace PVZToolWPF
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion
+        #region 全屏磁力菇
+        [ObservableProperty]
+        private bool isFullMagnetShroom = false;
+        [RelayCommand]
+        private void WriteFullMagnetShroom()
+        {
+            int address = 0x4620A2;
+            byte[] bys = [0x0F, 0x87, 0xE7, 0x00, 0x00, 0x00];
+            if(this.IsFullMagnetShroom)
+            {
+                bys = [0x90, 0x90, 0x90, 0x90, 0x90, 0x90];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            address = 0x462124;
+            bys = [0x74, 0x69];
+            if(this.IsFullMagnetShroom)
+            {
+                bys = [0x90, 0x90];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
     }
 }
