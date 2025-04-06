@@ -1404,5 +1404,34 @@ namespace PVZToolWPF
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion
+        #region 全屏窝瓜
+        [ObservableProperty]
+        private bool isFullPumpkin = false;
+        [RelayCommand]
+        private void WriteFullPumpkin()
+        {
+            int address = 0x460837;
+            byte[] bys = [0x0F, 0x85, 0x62, 0x01, 0x00, 0x00];
+            if(this.IsFullPumpkin)
+            {
+                bys = [0x90, 0x90, 0x90, 0x90, 0x90, 0x90];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            address = 0x460929;
+            bys = [0x7F, 0x70];
+            if(this.IsFullPumpkin)
+            {
+                bys = [0xEB, 0x45];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+            address = 0x460747;
+            bys = [0x75, 0x72];
+            if(this.IsFullPumpkin)
+            {
+                bys = [0xEB, 0x5F];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
     }
 }

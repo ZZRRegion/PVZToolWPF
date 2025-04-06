@@ -125,6 +125,9 @@
                             <CheckBox IsChecked="{Binding IsFullBomb}" Command="{Binding WriteFullBombCommand}" Content="全屏炸弹"/>
                             <CheckBox IsChecked="{Binding IsFullChili}" Command="{Binding WriteFullChiliCommand}" Content="全屏火爆辣椒"/>
                         </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsFullPumpkin}" Command="{Binding WriteFullPumpkinCommand}" Content="全屏窝瓜"/>
+                        </StackPanel>
                     </StackPanel>
                 </StackPanel>
 
