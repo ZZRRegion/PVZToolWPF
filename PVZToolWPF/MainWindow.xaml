@@ -122,6 +122,7 @@
                             <CheckBox IsChecked="{Binding IsUnlimited}" Command="{Binding WriteUnlimitedCommand}" Content="无限刷怪"/>
                             <CheckBox IsChecked="{Binding IsNoWakeUp}" Command="{Binding WriteNoWakeUpCommand}" Content="蘑菇免唤醒"/>
                             <CheckBox IsChecked="{Binding IsFullScreenChomper}" Command="{Binding WriteFullScreenChomperCommand}" Content="全屏大嘴花"/>
+                            <CheckBox IsChecked="{Binding IsFullBomb}" Command="{Binding WriteFullBombCommand}" Content="全屏炸弹"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>

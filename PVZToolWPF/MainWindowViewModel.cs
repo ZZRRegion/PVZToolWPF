@@ -1374,5 +1374,20 @@ namespace PVZToolWPF
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion
+        #region 全屏炸弹
+        [ObservableProperty]
+        private bool isFullBomb = false;
+        [RelayCommand]
+        private void WriteFullBomb()
+        {
+            int address = 0x41D8FF;
+            byte[] bys = [0x7F, 0x3E];
+            if(this.IsFullBomb)
+            {
+                bys = [0xEB, 0x20];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
     }
 }
