@@ -1337,5 +1337,20 @@ namespace PVZToolWPF
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion
+        #region 蘑菇免唤醒
+        [ObservableProperty]
+        private bool isNoWakeUp = false;
+        [RelayCommand]
+        private void WriteNoWakeUp()
+        {
+            int address = 0x45DE8E;
+            byte[] bys = [0x74, 0x1D];
+            if(this.IsNoWakeUp)
+            {
+                bys = [0xEB, 0x1D];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
     }
 }

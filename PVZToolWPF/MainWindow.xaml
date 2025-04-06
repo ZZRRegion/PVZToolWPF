@@ -120,6 +120,7 @@
                             <CheckBox IsChecked="{Binding IsSmogNone}" Command="{Binding WriteSmogNoneCommand}" Content="浓雾透视"/>
                             <CheckBox IsChecked="{Binding IsNutMutation}" Command="{Binding WriteNutMutationCommand}" Content="坚果变窝瓜"/>
                             <CheckBox IsChecked="{Binding IsUnlimited}" Command="{Binding WriteUnlimitedCommand}" Content="无限刷怪"/>
+                            <CheckBox IsChecked="{Binding IsNoWakeUp}" Command="{Binding WriteNoWakeUpCommand}" Content="蘑菇免唤醒"/>
                         </StackPanel>
                     </StackPanel>
                 </StackPanel>
