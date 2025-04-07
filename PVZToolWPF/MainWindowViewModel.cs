@@ -59,15 +59,15 @@ namespace PVZToolWPF
                     HINSTANCE[] hinstances = Kernel32.EnumProcessModules(hProcess);
                     this.baseAddress = hinstances[0].DangerousGetHandle().ToInt32();
                     this.UpdateEvent?.Invoke(hProcess, baseAddress, pid);
-                    this.Update(hProcess, baseAddress);
+                    this.Update(hProcess, baseAddress, hwnd);
                 }
             }
         }
-        public void Update(Kernel32.SafeHPROCESS hProcess, int baseAddress)
+        public void Update(Kernel32.SafeHPROCESS hProcess, int baseAddress, HWND hwnd)
         {
             this.hProcess = hProcess;
             this.baseAddress = baseAddress;
-            this.Messenger.Send(new UpdateModel(hProcess, baseAddress), PVZMsgToken.Update);
+            this.Messenger.Send(new UpdateModel(hProcess, baseAddress, hwnd), PVZMsgToken.Update);
             this.carRunBuf = nint.Zero;
             this.plantCallBuffer = nint.Zero;
             this.potThreadBuf = nint.Zero;

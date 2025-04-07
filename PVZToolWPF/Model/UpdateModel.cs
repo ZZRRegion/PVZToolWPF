@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PVZToolWPF.Model
 {
-    internal record UpdateModel(Kernel32.SafeHPROCESS SafeHPROCESS, int BaseAddress);
+    internal record UpdateModel(Kernel32.SafeHPROCESS SafeHPROCESS, int BaseAddress, HWND Hwnd);
     public static class PVZMsgToken
     {
         public static string Update = "Update";

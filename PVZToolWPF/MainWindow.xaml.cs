@@ -23,6 +23,7 @@ namespace PVZToolWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        private View.PlantView plantView = new();
         /// <summary>
         /// PVZ进程模块基址
         /// </summary>
@@ -45,6 +46,7 @@ namespace PVZToolWPF
             };
             dispatcherTimer.Tick += DispatcherTimer_Tick;
             dispatcherTimer.Start();
+            this.plantView.Show();
         }
 
         private void DispatcherTimer_Tick(object? sender, EventArgs e)
