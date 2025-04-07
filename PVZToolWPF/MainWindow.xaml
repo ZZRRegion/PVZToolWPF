@@ -128,6 +128,7 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <CheckBox IsChecked="{Binding IsFullPumpkin}" Command="{Binding WriteFullPumpkinCommand}" Content="全屏窝瓜"/>
+                            <CheckBox IsChecked="{Binding IsPlantInvincible}" Command="{Binding WritePlantInvincibleCommand}" Content="植物无敌"/>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <CheckBox IsChecked="{Binding IsShowRect}" Command="{Binding WriteShowRectCommand}" Content="显示外挂框"/>

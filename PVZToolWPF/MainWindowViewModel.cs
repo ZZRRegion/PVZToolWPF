@@ -1466,5 +1466,20 @@ namespace PVZToolWPF
             this.Messenger.Send(new ShowModel(IsShowRect), PVZMsgToken.Show);
         }
         #endregion
+        #region 植物无敌
+        [ObservableProperty]
+        private bool isPlantInvincible = false;
+        [RelayCommand]
+        private void WritePlantInvincible()
+        {
+            int address = 0x52FCF0;
+            byte[] bys = [0x83, 0x46, 0x40, 0xFC];
+            if(this.IsPlantInvincible)
+            {
+                bys = [0x83, 0x46, 0x40, 0x00];
+            }
+            MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
     }
 }
