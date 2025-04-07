@@ -20,7 +20,7 @@ namespace PVZToolWPF.View
     /// <summary>
     /// CardNoCDControl.xaml 的交互逻辑
     /// </summary>
-    public partial class CardNoCDControl : UserControl,IPVZUpdate
+    public partial class CardNoCDControl : UserControl
     {
         public CardNoCDControl()
         {
@@ -31,10 +31,6 @@ namespace PVZToolWPF.View
             };
             dispatcherTime.Tick += DispatcherTime_Tick;
             dispatcherTime.Start();
-        }
-        public void Update(Kernel32.SafeHPROCESS hprocess, int baseAddres)
-        {
-            this.viewModel.Update(hprocess, baseAddres);
         }
         private void DispatcherTime_Tick(object? sender, EventArgs e)
         {

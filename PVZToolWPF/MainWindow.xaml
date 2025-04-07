@@ -136,6 +136,9 @@
             <TabItem Header="冷却标志">
                 <view:CardNoCDControl x:Name="cardNoCD"/>
             </TabItem>
+            <TabItem Header="植物属性">
+                <view:PlantPowerControl x:Name="plantPower"/>
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

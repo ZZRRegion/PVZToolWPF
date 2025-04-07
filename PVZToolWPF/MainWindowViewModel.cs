@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Input;
+using PVZToolWPF.Model;
 using PVZToolWPF.Util;
 using PVZToolWPF.ViewModel;
 using Vanara;
@@ -20,7 +21,7 @@ using static Vanara.PInvoke.Gdi32;
 
 namespace PVZToolWPF
 {
-    internal partial class MainWindowViewModel : ObservableObject, IPVZUpdate
+    internal partial class MainWindowViewModel : ObservableRecipient
     {
         #region 私有变量
         private GlobalKeyboardListener globalKeyboard = new();
@@ -66,6 +67,7 @@ namespace PVZToolWPF
         {
             this.hProcess = hProcess;
             this.baseAddress = baseAddress;
+            this.Messenger.Send(new UpdateModel(hProcess, baseAddress), PVZMsgToken.Update);
             this.carRunBuf = nint.Zero;
             this.plantCallBuffer = nint.Zero;
             this.potThreadBuf = nint.Zero;

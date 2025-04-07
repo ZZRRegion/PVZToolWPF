@@ -1,4 +1,6 @@
-﻿using PVZToolWPF.Util;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using PVZToolWPF.Model;
+using PVZToolWPF.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,15 +10,10 @@ using System.Threading.Tasks;
 
 namespace PVZToolWPF.ViewModel
 {
-    internal partial class CardNoCDControlViewModel : ObservableObject,IPVZUpdate
+    internal partial class CardNoCDControlViewModel : ObservableRecipient, IRecipient<UpdateModel>
     {
         private Kernel32.SafeHPROCESS hPROCESS = Kernel32.SafeHPROCESS.Null;
         private int baseAddress = 0;
-        public void Update(Kernel32.SafeHPROCESS hPROCESS, int baseAddress)
-        {
-            this.hPROCESS = hPROCESS;
-            this.baseAddress = baseAddress;
-        }
         [ObservableProperty]
         private ObservableCollection<string> cardCDs = [];
         [ObservableProperty]
@@ -28,6 +25,7 @@ namespace PVZToolWPF.ViewModel
                 cardCDs.Add("");
                 sunClicks.Add("");
             }
+            this.Messenger.RegisterAll(this, PVZMsgToken.Update);
         }
         public void UpdateDate()
         {
@@ -47,6 +45,12 @@ namespace PVZToolWPF.ViewModel
                 int offset = 0x50 + i * 0xD8;
                 this.SunClicks[i] = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xE4, offset).ToString();
             }
+        }
+
+        public void Receive(UpdateModel message)
+        {
+            this.hPROCESS = message.SafeHPROCESS;
+            this.baseAddress = message.BaseAddress;
         }
     }
 }
