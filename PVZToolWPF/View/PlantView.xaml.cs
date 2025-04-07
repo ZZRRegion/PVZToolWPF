@@ -54,8 +54,8 @@ namespace PVZToolWPF.View
             };
             //drawingContext.DrawRectangle(brush, null, new Rect(new Point(0, 0), this.RenderSize));
             this.DrawPlant(drawingContext);
-            //this.DrawBullet(drawingContext);
-            //this.DrawZombies(drawingContext);
+            this.DrawBullet(drawingContext);
+            this.DrawZombies(drawingContext);
         }
         private void DrawZombies(DrawingContext dc)
         {
@@ -64,12 +64,18 @@ namespace PVZToolWPF.View
             Typeface typeface = new("宋体");
             double fontSize = 12;
             double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-            for (int i = 0; i < 100; i++)
+            int max = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x98);
+            for (int i = 0; i < max; i++)
             {
-                double state = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x90, 0x28 + i * 0x15C);
-                
+                int state = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x90, 0xEC + i * 0x15C);
+                if (state == 1)
+                    continue;
                 double x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x90, 0x8 + i * 0x15C) / DPI;
                 double y = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x90, 0xC + i * 0x15C) / DPI;
+                if (x == 0 || y == 0)
+                {
+                    continue;
+                }
                 System.Windows.Rect rect = new(new Point(x, y), new Size(ZombieWIDTH, ZombieHEIGHT));
                 dc.DrawRectangle(Brushes.Transparent, pen, rect);
                 int type = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xC8, 0x5C + i * 0x94);
@@ -99,6 +105,8 @@ namespace PVZToolWPF.View
                     continue;
                 double x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xC8, 0x8 + i * 0x94) / DPI;
                 double y = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xC8, 0xC + i * 0x94) / DPI;
+                if (x == 0 || y == 0)
+                    continue;
                 System.Windows.Rect rect = new(new Point(x, y), new Size(BulletWIDTH, BulletHEIGHT));
                 dc.DrawRectangle(Brushes.Transparent, pen, rect);
                 int type = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xC8, 0x5C + i * 0x94);
@@ -125,7 +133,7 @@ namespace PVZToolWPF.View
             {
                 int type = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x24 + i * 0x14C);
                 int v = MemoryUtil.ReadProcessMemoryByte(address, 0x768, 0xAC, 0x141 + i * 0x14C);
-                if (v == 1)
+                if (v == 1) //141\\[逻辑值]true则植物消失
                     continue;
                 double x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x8 + i * 0x14C) / DPI;
                 double y = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0xc + i * 0x14C) / DPI;
