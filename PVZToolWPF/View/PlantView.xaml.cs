@@ -54,8 +54,8 @@ namespace PVZToolWPF.View
             };
             //drawingContext.DrawRectangle(brush, null, new Rect(new Point(0, 0), this.RenderSize));
             this.DrawPlant(drawingContext);
-            this.DrawBullet(drawingContext);
-            this.DrawZombies(drawingContext);
+            //this.DrawBullet(drawingContext);
+            //this.DrawZombies(drawingContext);
         }
         private void DrawZombies(DrawingContext dc)
         {
@@ -123,17 +123,19 @@ namespace PVZToolWPF.View
             double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             for (int i = 0; i <= 5 * 9; i++)
             {
+                int type = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x24 + i * 0x14C);
+                int v = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x144 + i * 0x14C);
+                if (v != 1)
+                    continue;
                 double x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x8 + i * 0x14C) / DPI;
                 double y = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0xc + i * 0x14C) / DPI;
                 int blood = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x40 + i * 0x14C);
-                int vis = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x3c + i * 0x14C);
                 System.Windows.Rect rect = new(new Point(x, y), new Size(PLANTRECTWIDTH, PLANTRECTHEIGHT));
                 dc.DrawRectangle(Brushes.Transparent, pen, rect);
                 int row = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x1C + i * 0x14C);
                 int col = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x28 + i * 0x14C);
-                int type = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x24 + i * 0x14C);
+                
                 string text = $"I:{i}\nHP:{blood}\nr:{row}c:{col}\nt:{type}\n";
-                text += $"v:{vis}\n";
                 dc.DrawText(new FormattedText(
                     text, 
                     System.Globalization.CultureInfo.CurrentUICulture, 
