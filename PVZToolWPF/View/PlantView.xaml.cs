@@ -41,6 +41,35 @@ namespace PVZToolWPF.View
         {
             base.OnRender(drawingContext);
             this.DrawPlant(drawingContext);
+            this.DrawBullet(drawingContext);
+        }
+        private void DrawBullet(DrawingContext dc)
+        {
+            int address = 0x6a9ec0;
+            Pen pen = new(Brushes.Blue, 1);
+            Typeface typeface = new("宋体");
+            double fontSize = 12;
+            for (int i = 0; i < 100; i++)
+            {
+                int isDisappear = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xC8, 0x50 + i * 0x94);
+                if (isDisappear > 0)
+                    continue;
+                double x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xC8, 0x8 + i * 0x94) / 1.5;
+                double y = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xC8, 0xC + i * 0x94) / 1.5;
+                System.Windows.Rect rect = new(new Point(x, y), new Size(50, 50));
+                dc.DrawRectangle(Brushes.Transparent, pen, rect);
+                int type = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xC8, 0x5C + i * 0x94);
+                string text = $"t:{type}";
+                dc.DrawText(new FormattedText(
+                    text,
+                    System.Globalization.CultureInfo.CurrentUICulture,
+                    FlowDirection.LeftToRight,
+                    typeface,
+                    fontSize,
+                    Brushes.Black,
+                    VisualTreeHelper.GetDpi(this).PixelsPerDip),
+                    new Point(x, y));
+            }
         }
         private void DrawPlant(DrawingContext dc)
         {
@@ -52,13 +81,15 @@ namespace PVZToolWPF.View
             {
                 double x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x8 + i * 0x14C) / 1.5;
                 double y = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0xc + i * 0x14C) / 1.5;
-                if (x == 0 || y == 0)
-                    continue;
                 int blood = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x40 + i * 0x14C);
                 System.Windows.Rect rect = new(new Point(x, y), new Size(50, 50));
                 dc.DrawRectangle(Brushes.Transparent, pen, rect);
+                int row = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x1C + i * 0x14C);
+                int col = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x28 + i * 0x14C);
+                int type = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x24 + i * 0x14C);
+                string text = $"I:{i}\nHP:{blood}\nr:{row}c:{col}\nt:{type}";
                 dc.DrawText(new FormattedText(
-                    $"I:{i}\nhp:{blood}", 
+                    text, 
                     System.Globalization.CultureInfo.CurrentUICulture, 
                     FlowDirection.LeftToRight, 
                     typeface,
@@ -70,7 +101,7 @@ namespace PVZToolWPF.View
         }
         private void Update()
         {
-            if(User32.GetWindowRect(this.hwnd, out Vanara.PInvoke.RECT rect))
+            if(!User32.IsMinimized(hwnd) && User32.GetWindowRect(this.hwnd, out Vanara.PInvoke.RECT rect))
             {
                 this.Left = rect.Left / 1.5;
                 this.Top = rect.Top / 1.5;

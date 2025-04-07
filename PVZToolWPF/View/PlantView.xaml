@@ -6,6 +6,8 @@
         xmlns:local="clr-namespace:PVZToolWPF.View"
         mc:Ignorable="d" Loaded="Window_Loaded"
         AllowsTransparency="True" WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
         Topmost="True" Background="Transparent"
         Title="PlantView" Height="450" Width="800">
 </Window>
