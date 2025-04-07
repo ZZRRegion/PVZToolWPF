@@ -23,7 +23,7 @@ namespace PVZToolWPF.View
     /// <summary>
     /// PlantView.xaml 的交互逻辑
     /// </summary>
-    public partial class PlantView : Window, IRecipient<UpdateModel>
+    public partial class PlantView : Window, IRecipient<UpdateModel>, IRecipient<ShowModel>
     {
         private Kernel32.SafeHPROCESS? safeHPROCESS;
         private HWND hwnd;
@@ -34,10 +34,12 @@ namespace PVZToolWPF.View
         private const double BulletWIDTH = 30 / DPI;
         private const double ZombieWIDTH = 100 / DPI;
         private const double ZombieHEIGHT = 110 / DPI;
+        private bool show = true;
         public PlantView()
         {
             InitializeComponent();
             WeakReferenceMessenger.Default.RegisterAll(this, PVZMsgToken.Update);
+            WeakReferenceMessenger.Default.RegisterAll(this, PVZMsgToken.Show);
         }
 
         void IRecipient<UpdateModel>.Receive(UpdateModel message)
@@ -53,9 +55,12 @@ namespace PVZToolWPF.View
                 Opacity = 0.2
             };
             //drawingContext.DrawRectangle(brush, null, new Rect(new Point(0, 0), this.RenderSize));
-            this.DrawPlant(drawingContext);
-            this.DrawBullet(drawingContext);
-            this.DrawZombies(drawingContext);
+            if (this.show)
+            {
+                this.DrawPlant(drawingContext);
+                this.DrawBullet(drawingContext);
+                this.DrawZombies(drawingContext);
+            }
         }
         private void DrawZombies(DrawingContext dc)
         {
@@ -78,15 +83,19 @@ namespace PVZToolWPF.View
                 }
                 System.Windows.Rect rect = new(new Point(x, y), new Size(ZombieWIDTH, ZombieHEIGHT));
                 dc.DrawRectangle(Brushes.Transparent, pen, rect);
-                int type = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xC8, 0x5C + i * 0x94);
-                string text = $"t:{type}";
+                int blood = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x90, 0xC8 + i * 0x15C);
+                int row = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x90, 0x1C + i * 0x15C);
+                int col = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x90, 0x1C + i * 0x15C);
+
+                int type = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x90, 0x24 + i * 0x15C);
+                string text = $"I:{i}\nHP:{blood}\nr:{row}c:{col}\nt:{type}\n";
                 dc.DrawText(new FormattedText(
                     text,
                     System.Globalization.CultureInfo.CurrentUICulture,
                     FlowDirection.LeftToRight,
                     typeface,
                     fontSize,
-                    Brushes.Black,
+                    Brushes.Red,
                     pixelsPerDip),
                     new Point(x, y));
             }
@@ -98,7 +107,9 @@ namespace PVZToolWPF.View
             Typeface typeface = new("宋体");
             double fontSize = 12;
             double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-            for (int i = 0; i < 100; i++)
+            int max = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xD0);
+
+            for (int i = 0; i < max; i++)
             {
                 int isDisappear = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xC8, 0x50 + i * 0x94);
                 if (isDisappear > 0)
@@ -186,6 +197,11 @@ namespace PVZToolWPF.View
         {
             this.Update();
             this.InvalidateVisual();
+        }
+
+        void IRecipient<ShowModel>.Receive(ShowModel message)
+        {
+            this.show = message.Show;
         }
     }
 }

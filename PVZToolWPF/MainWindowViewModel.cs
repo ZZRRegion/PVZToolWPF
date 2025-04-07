@@ -1457,5 +1457,14 @@ namespace PVZToolWPF
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
         }
         #endregion
+        #region 显示外挂框
+        [ObservableProperty]
+        private bool isShowRect = true;
+        [RelayCommand]
+        private void WriteShowRect()
+        {
+            this.Messenger.Send(new ShowModel(IsShowRect), PVZMsgToken.Show);
+        }
+        #endregion
     }
 }
