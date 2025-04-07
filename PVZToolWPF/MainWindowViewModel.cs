@@ -566,7 +566,7 @@ namespace PVZToolWPF
         private void Seckill()
         {
             int address = 0x722000;
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < 1024; i++)
             {
                 MemoryUtil.WriteProcessMemoryInt(3, address, i * 348 + 0x28);
                 MemoryUtil.WriteProcessMemoryInt(3, address, -i * 348 + 0x28);

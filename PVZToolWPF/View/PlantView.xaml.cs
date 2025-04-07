@@ -137,6 +137,8 @@ namespace PVZToolWPF.View
                     continue;
                 double x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x8 + i * 0x14C) / DPI;
                 double y = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0xc + i * 0x14C) / DPI;
+                if (x == 0 || y == 0)
+                    continue;
                 int blood = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x40 + i * 0x14C);
                 System.Windows.Rect rect = new(new Point(x, y), new Size(PLANTRECTWIDTH, PLANTRECTHEIGHT));
                 dc.DrawRectangle(Brushes.Transparent, pen, rect);
