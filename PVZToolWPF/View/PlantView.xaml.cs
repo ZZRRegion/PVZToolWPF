@@ -124,8 +124,8 @@ namespace PVZToolWPF.View
             for (int i = 0; i <= 5 * 9; i++)
             {
                 int type = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x24 + i * 0x14C);
-                int v = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x144 + i * 0x14C);
-                if (v != 1)
+                int v = MemoryUtil.ReadProcessMemoryByte(address, 0x768, 0xAC, 0x141 + i * 0x14C);
+                if (v == 1)
                     continue;
                 double x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x8 + i * 0x14C) / DPI;
                 double y = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0xc + i * 0x14C) / DPI;
