@@ -40,8 +40,37 @@ namespace PVZToolWPF.View
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-            this.DrawPlant(drawingContext);
-            this.DrawBullet(drawingContext);
+            //this.DrawPlant(drawingContext);
+            //this.DrawBullet(drawingContext);
+            this.DrawZombies(drawingContext);
+        }
+        private void DrawZombies(DrawingContext dc)
+        {
+            int address = 0x6a9ec0;
+            Pen pen = new(Brushes.Yellow, 1);
+            Typeface typeface = new("宋体");
+            double fontSize = 12;
+            double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            for (int i = 0; i < 100; i++)
+            {
+                double state = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x90, 0x28 + i * 0x15C);
+                
+                double x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x90, 0x8 + i * 0x15C) / 1.5;
+                double y = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0x90, 0xC + i * 0x15C) / 1.5;
+                System.Windows.Rect rect = new(new Point(x, y), new Size(50, 100));
+                dc.DrawRectangle(Brushes.Transparent, pen, rect);
+                int type = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xC8, 0x5C + i * 0x94);
+                string text = $"t:{type}";
+                dc.DrawText(new FormattedText(
+                    text,
+                    System.Globalization.CultureInfo.CurrentUICulture,
+                    FlowDirection.LeftToRight,
+                    typeface,
+                    fontSize,
+                    Brushes.Black,
+                    pixelsPerDip),
+                    new Point(x, y));
+            }
         }
         private void DrawBullet(DrawingContext dc)
         {
@@ -49,6 +78,7 @@ namespace PVZToolWPF.View
             Pen pen = new(Brushes.Blue, 1);
             Typeface typeface = new("宋体");
             double fontSize = 12;
+            double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             for (int i = 0; i < 100; i++)
             {
                 int isDisappear = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xC8, 0x50 + i * 0x94);
@@ -67,7 +97,7 @@ namespace PVZToolWPF.View
                     typeface,
                     fontSize,
                     Brushes.Black,
-                    VisualTreeHelper.GetDpi(this).PixelsPerDip),
+                    pixelsPerDip),
                     new Point(x, y));
             }
         }
@@ -77,6 +107,7 @@ namespace PVZToolWPF.View
             Pen pen = new(Brushes.Red, 1);
             Typeface typeface = new("宋体");
             double fontSize = 12;
+            double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             for (int i = 0; i <= 5 * 9; i++)
             {
                 double x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x8 + i * 0x14C) / 1.5;
@@ -95,7 +126,7 @@ namespace PVZToolWPF.View
                     typeface,
                     fontSize,
                     Brushes.Black,
-                    VisualTreeHelper.GetDpi(this).PixelsPerDip), 
+                    pixelsPerDip), 
                     new Point(x, y));
             }
         }
