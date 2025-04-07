@@ -46,7 +46,9 @@ namespace PVZToolWPF.View
         {
             int address = 0x6a9ec0;
             Pen pen = new(Brushes.Red, 1);
-            for (int i = 0; i < 5 * 9; i++)
+            Typeface typeface = new("宋体");
+            double fontSize = 12;
+            for (int i = 0; i <= 5 * 9; i++)
             {
                 double x = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x8 + i * 0x14C) / 1.5;
                 double y = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0xc + i * 0x14C) / 1.5;
@@ -55,7 +57,15 @@ namespace PVZToolWPF.View
                 int blood = MemoryUtil.ReadProcessMemoryInt(address, 0x768, 0xAC, 0x40 + i * 0x14C);
                 System.Windows.Rect rect = new(new Point(x, y), new Size(50, 50));
                 dc.DrawRectangle(Brushes.Transparent, pen, rect);
-                //dc.DrawText(new FormattedText(blood.ToString(), System.Globalization.CultureInfo.CurrentUICulture, FlowDirection.LeftToRight, null, 12), new Point(x, y));
+                dc.DrawText(new FormattedText(
+                    $"I:{i}\nhp:{blood}", 
+                    System.Globalization.CultureInfo.CurrentUICulture, 
+                    FlowDirection.LeftToRight, 
+                    typeface,
+                    fontSize,
+                    Brushes.Black,
+                    VisualTreeHelper.GetDpi(this).PixelsPerDip), 
+                    new Point(x, y));
             }
         }
         private void Update()
