@@ -115,7 +115,7 @@ namespace PVZToolWPF
             this.plantNums.Add("豌豆射手");
             this.plantNums.Add("向日葵");
             this.plantNums.Add("樱桃炸弹");
-
+            
             this.zombieNums.Add("僵尸");
             this.zombieNums.Add("摇旗僵尸");
             this.zombieNums.Add("路障僵尸");
