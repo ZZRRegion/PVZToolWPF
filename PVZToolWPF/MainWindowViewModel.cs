@@ -112,15 +112,15 @@ namespace PVZToolWPF
             {
                 this.yAxiss.Add(i);
             }
-            this.plantNums.Add("豌豆射手");
-            this.plantNums.Add("向日葵");
-            this.plantNums.Add("樱桃炸弹");
+            foreach(string txt in PVZDatas.Plants_zh)
+            {
+                this.plantNums.Add(txt);
+            }
             
-            this.zombieNums.Add("僵尸");
-            this.zombieNums.Add("摇旗僵尸");
-            this.zombieNums.Add("路障僵尸");
-            this.zombieNums.Add("撑杆僵尸");
-            this.zombieNums.Add("铁桶僵尸");
+            foreach(string txt in PVZDatas.Zombies_zh)
+            {
+                this.zombieNums.Add(txt);
+            }
             DispatcherTimer dispatcherTimer = new()
             {
                 Interval = TimeSpan.FromMilliseconds(200),
