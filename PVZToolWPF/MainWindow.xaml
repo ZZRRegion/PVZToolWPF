@@ -17,7 +17,10 @@
         <TabControl>
             <TabItem Header="通用">
                 <StackPanel VerticalAlignment="Center">
-                    <Button Command="{Binding ReloadCommand}" Content="重新加载"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Command="{Binding ReloadCommand}" Content="重新加载进程"/>
+                        <CheckBox IsChecked="{Binding IsDisplayAffinity}" Command="{Binding WriteDisplayAffinityCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Content="防截图/录屏"/>
+                    </StackPanel>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="阳光值："/>
                         <TextBox Width="100" Text="{Binding SunValue}" />

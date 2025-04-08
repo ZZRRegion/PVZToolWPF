@@ -10,6 +10,9 @@ using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Threading;
 using CommunityToolkit.Mvvm.Input;
 using PVZToolWPF.Model;
@@ -1479,6 +1482,16 @@ namespace PVZToolWPF
                 bys = [0x83, 0x46, 0x40, 0x00];
             }
             MemoryUtil.WriteProcessMemoryBytes(bys, address);
+        }
+        #endregion
+        #region 防截图/录屏
+        [ObservableProperty]
+        private bool isDisplayAffinity = false;
+        [RelayCommand]
+        private void WriteDisplayAffinity(Window window)
+        {
+            nint hwnd = new WindowInteropHelper(window).Handle;
+            User32.SetWindowDisplayAffinity(new HWND(hwnd), IsDisplayAffinity ? User32.WindowDisplayAffinity.WDA_MONITOR : User32.WindowDisplayAffinity.WDA_NONE);
         }
         #endregion
     }
