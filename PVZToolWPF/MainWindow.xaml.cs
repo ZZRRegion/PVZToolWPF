@@ -1,4 +1,5 @@
 ﻿global using Vanara.PInvoke;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -48,7 +49,11 @@ namespace PVZToolWPF
             dispatcherTimer.Start();
             this.plantView.Show();
         }
-
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            this.plantView.Close();
+            base.OnClosing(e);
+        }
         private void DispatcherTimer_Tick(object? sender, EventArgs e)
         {
             if(this.pid > 0 && !this.hprocess.IsInvalid)

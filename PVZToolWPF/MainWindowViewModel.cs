@@ -1491,7 +1491,10 @@ namespace PVZToolWPF
         private void WriteDisplayAffinity(Window window)
         {
             nint hwnd = new WindowInteropHelper(window).Handle;
-            User32.SetWindowDisplayAffinity(new HWND(hwnd), IsDisplayAffinity ? User32.WindowDisplayAffinity.WDA_MONITOR : User32.WindowDisplayAffinity.WDA_NONE);
+            //#define WDA_NONE        0x00000000
+            //#define WDA_MONITOR     0x00000001
+            //#define WDA_EXCLUDEFROMCAPTURE 0x00000011
+            User32.SetWindowDisplayAffinity(new HWND(hwnd), IsDisplayAffinity ? (User32.WindowDisplayAffinity)0x11 : User32.WindowDisplayAffinity.WDA_NONE);
         }
         #endregion
     }
