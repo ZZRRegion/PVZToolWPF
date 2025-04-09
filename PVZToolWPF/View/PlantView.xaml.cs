@@ -27,13 +27,13 @@ namespace PVZToolWPF.View
     {
         private Kernel32.SafeHPROCESS? safeHPROCESS;
         private HWND hwnd;
-        private const double DPI = 1;
-        private const double PLANTRECTHEIGHT = 75 / DPI;
-        private const double PLANTRECTWIDTH = 75 / DPI;
-        private const double BulletHEIGHT = 30 / DPI;
-        private const double BulletWIDTH = 30 / DPI;
-        private const double ZombieWIDTH = 100 / DPI;
-        private const double ZombieHEIGHT = 110 / DPI;
+        private double DPI => VisualTreeHelper.GetDpi(this).PixelsPerDip;
+        private double PLANTRECTHEIGHT => 75 / DPI;
+        private double PLANTRECTWIDTH => 75 / DPI;
+        private double BulletHEIGHT => 30 / DPI;
+        private double BulletWIDTH => 30 / DPI;
+        private double ZombieWIDTH =>100 / DPI;
+        private double ZombieHEIGHT => 110 / DPI;
         private bool show = true;
         public PlantView()
         {
@@ -50,11 +50,11 @@ namespace PVZToolWPF.View
         protected override void OnRender(DrawingContext drawingContext)
         {
             //base.OnRender(drawingContext);
-            SolidColorBrush brush = new SolidColorBrush(Colors.Green)
+            SolidColorBrush brush = new(Colors.Green)
             {
                 Opacity = 0.2
             };
-            //drawingContext.DrawRectangle(brush, null, new Rect(new Point(0, 0), this.RenderSize));
+            drawingContext.DrawRectangle(brush, null, new Rect(new Point(0, 0), this.RenderSize));
             if (this.show)
             {
                 this.DrawPlant(drawingContext);
@@ -177,7 +177,7 @@ namespace PVZToolWPF.View
                 this.Width = rect.Width / DPI;
                 this.Height = rect.Height / DPI;
                 this.Left = winRect.Left / DPI;
-                this.Top = winRect.Top / DPI + winRect.Height - rect.Height;
+                this.Top = (winRect.Top + winRect.Height - rect.Height) / DPI;
             }
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -187,7 +187,7 @@ namespace PVZToolWPF.View
             User32.SetWindowLong(hwnd, User32.WindowLongFlags.GWL_EXSTYLE, extendedStyle | (int)User32.WindowStylesEx.WS_EX_TRANSPARENT);
             DispatcherTimer timer = new()
             {
-                Interval = TimeSpan.FromMilliseconds(10),
+                Interval = TimeSpan.FromMilliseconds(300),
             };
             timer.Tick += Timer_Tick;
             timer.Start();
@@ -202,6 +202,11 @@ namespace PVZToolWPF.View
         void IRecipient<ShowModel>.Receive(ShowModel message)
         {
             this.show = message.Show;
+            nint hwnd = new WindowInteropHelper(this).Handle;
+            //#define WDA_NONE        0x00000000
+            //#define WDA_MONITOR     0x00000001
+            //#define WDA_EXCLUDEFROMCAPTURE 0x00000011
+            User32.SetWindowDisplayAffinity(new HWND(hwnd), message.DisplayAffinity ? (User32.WindowDisplayAffinity)0x11 : User32.WindowDisplayAffinity.WDA_NONE);
         }
     }
 }

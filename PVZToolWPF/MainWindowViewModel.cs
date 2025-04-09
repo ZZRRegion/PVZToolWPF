@@ -1298,9 +1298,9 @@ namespace PVZToolWPF
                 this.nutMutationBuf = MemoryUtil.VirtualAllocEx();
             }
             int address = 0x464523;
-            byte[] bys = {
+            byte[] bys = [
                         0x8B, 0x77, 0x40, 0x8D, 0x0C, 0x40
-                        };
+                        ];
             if(this.IsNutMutation)
             {
                 bys = [
@@ -1466,7 +1466,7 @@ namespace PVZToolWPF
         [RelayCommand]
         private void WriteShowRect()
         {
-            this.Messenger.Send(new ShowModel(IsShowRect), PVZMsgToken.Show);
+            this.Messenger.Send(new ShowModel(IsShowRect, IsDisplayAffinity), PVZMsgToken.Show);
         }
         #endregion
         #region 植物无敌
@@ -1495,6 +1495,7 @@ namespace PVZToolWPF
             //#define WDA_MONITOR     0x00000001
             //#define WDA_EXCLUDEFROMCAPTURE 0x00000011
             User32.SetWindowDisplayAffinity(new HWND(hwnd), IsDisplayAffinity ? (User32.WindowDisplayAffinity)0x11 : User32.WindowDisplayAffinity.WDA_NONE);
+            this.Messenger.Send(new ShowModel(IsShowRect, IsDisplayAffinity), PVZMsgToken.Show);
         }
         #endregion
     }
